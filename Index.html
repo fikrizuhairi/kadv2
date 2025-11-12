@@ -1,0 +1,624 @@
+<!doctype html>
+<html lang="ms">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Jemputan Perkahwinan — Isma & Fikri</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root{--accent:#a67c52;--muted:#6b7280;--glass:rgba(255,255,255,0.75)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:'Poppins',sans-serif;background:#fff;color:#111;-webkit-font-smoothing:antialiased;
+      padding-bottom:calc(140px + env(safe-area-inset-bottom));
+      overflow-x:hidden;
+    }
+
+    /* ---------- FIXED BACKGROUND ---------- */
+    .bg-video {
+      position:fixed;
+      inset:0;
+      z-index:-3;
+      pointer-events:none;
+      overflow:hidden;
+    }
+    .bg-video img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      filter: saturate(0.98) contrast(1) brightness(0.96);
+      transform: scale(1.03);
+      will-change: transform;
+    }
+
+    /* ---------- MAIN APP (scrolls above fixed bg) ---------- */
+    .app{max-width:420px;margin:auto;position:relative;min-height:100vh;scroll-snap-type:y mandatory;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:140px;z-index:1}
+    section{scroll-snap-align:start;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative}
+    .content{background:rgba(255,255,255,0.92);backdrop-filter:blur(6px);border-radius:16px;padding:24px;box-shadow:0 8px 20px rgba(0,0,0,0.05);position:relative;z-index:2;margin:20px;max-width:420px}
+
+    .intro-text{position:relative;text-align:center;color:#cc5500;z-index:2;text-shadow:2px 2px 4px rgba(0,0,0,0.25);padding-top:80px;padding-bottom:40px}
+    .intro-text .kecil{font-family:'Playfair Display',serif;font-size:14px;color:#000;margin-bottom:6px;font-weight:400}
+    .intro-text .besar{font-family:'Playfair Display',serif;font-size:40px;font-weight:700;letter-spacing:1px;line-height:1.2}
+    .intro-text .tarikh{font-family:'Poppins',sans-serif;font-size:16px;color:#222;margin-top:10px;font-weight:500}
+    .intro-text .lokasi{font-family:'Poppins',sans-serif;font-size:14px;color:#222;margin-top:3px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    .parent-name,.couple-name{font-family:'Playfair Display',serif;font-size:18px;color:#2b2b2b;margin-bottom:8px;text-align:center;font-weight:700}
+    h2{font-size:18px;font-weight:600;color:var(--accent);margin:16px 0 8px;text-align:center}
+    p{font-size:15px;color:#222;line-height:1.6;margin-bottom:8px;text-align:center}
+
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
+    .grid img{width:100%;height:90px;object-fit:cover;border-radius:8px;cursor:pointer;transition:0.3s}
+    .grid img:hover{opacity:0.95;transform:scale(1.02)}
+
+    .modal{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgba(0,0,0,0.8)}
+    .modal-content{margin:auto;display:block;max-width:90%;max-height:90%;border-radius:10px}
+    .close{position:absolute;top:15px;right:25px;color:white;font-size:30px;font-weight:bold;cursor:pointer}
+
+    .countdown{display:flex;justify-content:center;gap:8px;margin-top:12px}
+    .countdown div{background:#f1f1f1;padding:8px 10px;border-radius:8px;min-width:54px}
+    .countdown .num{font-weight:700;font-size:16px}
+    .countdown .lbl{font-size:11px;color:var(--muted)}
+
+    footer{font-size:12px;color:var(--muted);margin-top:20px;text-align:center}
+
+    /* bottom bar */
+    .bottom-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:99999;width:calc(100% - 40px);max-width:420px;background:rgba(0,0,0,0.75);border-radius:14px;padding:10px 12px;box-shadow:0 6px 20px rgba(0,0,0,0.12);display:flex;gap:12px;align-items:center;justify-content:space-around;overflow:visible;padding-bottom:calc(10px + env(safe-area-inset-bottom));}
+    .bottom-bar .icon-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;background:transparent;color:#fff;font-size:20px;text-decoration:none;gap:4px;cursor:pointer}
+    .bottom-bar .icon-btn i{color:#fff;font-size:20px}
+    .bottom-bar .icon-btn span{font-size:11px;color:#fff;line-height:1}
+
+    .contact-card{display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:110px;z-index:10001;width:calc(100% - 40px);max-width:420px;background:#e8dcc6;border-radius:18px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,0.12)}
+    .contact-card h3{text-align:center;margin-bottom:8px;font-family:'Playfair Display',serif;font-size:20px;color:#1f1f1f}
+    .contact-list{margin-top:8px}
+    .contact-row{display:flex;align-items:center;justify-content:space-between;padding:12px 6px;border-radius:10px}
+    .contact-info{display:flex;flex-direction:column}
+    .contact-info .name{font-size:16px;font-weight:600;color:#111}
+    .contact-info .role{font-size:13px;font-style:italic;color:#6b5f50}
+    .contact-actions{display:flex;gap:12px;align-items:center}
+    .contact-actions a{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:8px;background:var(--accent);border:none;text-decoration:none;color:#fff}
+
+    @media (max-width:420px){.contact-card{width:calc(100% - 28px);padding:16px}}
+
+    .bubbles{display:flex;flex-direction:column;gap:8px;margin:12px 0;max-height:300px;overflow-y:auto;padding-right:4px;scroll-behavior:smooth}
+    .bubble{align-self:flex-start;background:#fff4e9;border:1px solid #f0e1cf;padding:10px 14px;border-radius:18px;max-width:90%;box-shadow:0 6px 12px rgba(0,0,0,0.06);}
+    .bubble .meta{font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600}
+    .bubble .msg{font-size:14px;color:#222;line-height:1.4}
+
+    .map-popup iframe{width:100%;height:60vh;max-height:760px;border:none;border-radius:10px;margin-top:8px}
+    @media (max-width:420px){.map-popup iframe{height:65vh;max-height:820px}}
+
+    .map-popup{display:none;position:fixed;z-index:10000}
+
+    /* Optional: gaya scrollbar lembut */
+    .bubbles::-webkit-scrollbar { width: 6px; }
+    .bubbles::-webkit-scrollbar-thumb { background: #d1c3aa; border-radius: 3px; }
+    .bubbles::-webkit-scrollbar-track { background: transparent; }
+
+    /* ---------- ENTRY OVERLAY + DOOR ANIMATION ---------- */
+    #entryOverlay {
+      position:fixed;
+      inset:0;
+      z-index:100000;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.55));
+      -webkit-backdrop-filter: blur(2px);
+    }
+    #entryOverlay .center {
+      text-align:center;
+      color:#fff;
+      padding:18px;
+      max-width:92%;
+    }
+    #entryOverlay h1{font-family:'Playfair Display',serif;font-size:28px;margin-bottom:6px}
+    #entryOverlay p{opacity:0.95;margin-bottom:14px}
+    #enterBtn {
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      background:var(--accent);
+      color:#fff;
+      padding:12px 18px;
+      border-radius:10px;
+      font-weight:700;
+      cursor:pointer;
+      border:none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      transform: translateY(0);
+      transition: transform 200ms ease;
+    }
+    #enterBtn:active{ transform: translateY(2px); }
+
+    .door {
+      position:fixed;
+      top:0;
+      height:100vh;
+      width:50vw;
+      z-index:100001;
+      background: linear-gradient(180deg, rgba(10,8,6,0.98), rgba(30,24,20,0.95));
+      box-shadow: inset 0 0 80px rgba(0,0,0,0.25);
+      transform-origin: left center;
+      transition: transform 900ms cubic-bezier(.22,.9,.2,1), opacity 600ms ease;
+      will-change: transform;
+    }
+    .door.right { right:0; left:auto; transform-origin: right center; }
+    .door.left { left:0; }
+
+    .door .panel-deco { position:absolute; inset:0; background-image: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02)); pointer-events:none; }
+
+    body:not(.entered) .door.left { transform: translateX(0) rotateY(0deg); }
+    body:not(.entered) .door.right { transform: translateX(0) rotateY(0deg); }
+
+    body.entered .door.left { transform: translateX(-110vw) rotateY(-8deg); opacity:0.98; }
+    body.entered .door.right { transform: translateX(110vw) rotateY(8deg); opacity:0.98; }
+
+    #entryOverlay.hidden { opacity:0; transition: opacity 400ms ease 400ms; pointer-events:none; }
+
+    @media (max-width:420px){
+      .intro-text .besar{font-size:32px}
+      #entryOverlay h1{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+  <!-- Fixed background -->
+  <div class="bg-video" aria-hidden="true">
+    <img src="https://jemputan.me/images/upload/design/1723691062_FLO102_Cover.png" alt="Wedding Background" />
+  </div>
+
+  <!-- Door panels -->
+  <div class="door left" aria-hidden="true"><div class="panel-deco"></div></div>
+  <div class="door right" aria-hidden="true"><div class="panel-deco"></div></div>
+
+  <!-- Entry overlay -->
+  <div id="entryOverlay" role="dialog" aria-label="Skrin Muka" aria-modal="true">
+    <div class="center">
+      <h1>Jemputan Isma & Fikri</h1>
+      <p>Selamat datang — laman ini akan dibuka seketika.</p>
+      <button id="enterBtn" aria-label="Masuk ke laman">Tekan untuk Masuk</button>
+    </div>
+  </div>
+
+  <!-- MAIN SCROLLING CONTENT -->
+  <div class="app" id="appRoot" aria-hidden="false">
+    <section>
+      <div class="intro-text">
+        <div class="kecil">WALIMATULURUS</div><br><br>
+        <div class="besar"><span>ISMA</span><span>&amp;</span><span>FIKRI</span></div><br>
+        <div class="tarikh">03 JANUARI 2026 | SABTU</div>
+        <div class="lokasi">WHITE HOUSE EVENT SPACE, DUNGUN</div>
+      </div>
+    </section>
+
+    <section>
+      <div class="content" id="mainCard">
+        <p>Assalamualaikum &amp; Salam Sejahtera</p>
+        <div class="parent-name"><strong>HJ. MOHD SHUHAIMI BIN DAUD</strong></div>
+        <div class="parent-name"><strong>&amp;</strong></div>
+        <div class="parent-name"><strong>HJH. NOR AZILA BINTI RAMLI</strong></div>
+        <p>Dengan penuh kesyukuran kami menjemput,<br>Dato’ | Datin | Tuan | Puan | Encik | Cik<br>ke majlis perkahwinan puteri kami</p><br>
+        <div class="couple-name"><strong>SITI ISMAHANI IZZATI BINTI MOHD SHUHAIMI</strong></div>
+        <div class="parent-name"><strong>&amp;</strong></div>
+        <div class="couple-name"><strong>MUHAMMAD FIKRI BIN ZUHAIRI</strong></div>
+
+        <h2>Butiran Majlis</h2>
+        <p><strong>Tarikh:</strong> Sabtu, 03 Januari 2026<br><strong>Masa:</strong> 11:00 pagi - 4:00 petang<br><strong>Tempat:</strong> White House Event Space Dungun</p>
+
+        <h2>Atur Cara</h2>
+        <p><strong>Jamuan:</strong> 11.00 AM – 4.00 PM<br><strong>Ketibaan Pengantin:</strong> 12.00 PM</p>
+
+        <h2>Gambar</h2>
+        <div class="grid">
+          <img src="https://i.postimg.cc/3RRKKKHH/265f0c1f-9af7-4fb7-956d-50d064a0eba4.jpg" alt="1">
+          <img src="https://i.postimg.cc/KcP9ZtJy/A24C2718-C6BC-4653-B516-9741E7B213BF-1-105-c.jpg" alt="2">
+          <img src="https://i.postimg.cc/T1VPHTMh/8EC8700E-DA47-4FF0-9F84-2FCE47B1A986-1-105-c.jpg" alt="3">
+        </div>
+
+        <div id="imageModal" class="modal" aria-hidden="true">
+          <span class="close" id="imageModalClose" role="button" aria-label="Tutup">&times;</span>
+          <img class="modal-content" id="modalImg" alt="Preview" />
+        </div>
+
+        <h2>Ucapan</h2>
+        <div class="bubbles" id="bubblesContainer" tabindex="0" aria-live="polite" aria-label="Senarai ucapan"></div>
+
+        <h2>COUNTING DAYS</h2>
+        <div class="countdown" id="countdown">
+          <div><div class="num" id="days">0</div><div class="lbl">Hari</div></div>
+          <div><div class="num" id="hours">0</div><div class="lbl">Jam</div></div>
+          <div><div class="num" id="mins">0</div><div class="lbl">Minit</div></div>
+          <div><div class="num" id="secs">0</div><div class="lbl">Saat</div></div>
+        </div>
+
+        <footer>Terima kasih — Kami hargai kehadiran dan doa anda.</footer>
+      </div>
+    </section>
+  </div>
+
+  <!-- contact card -->
+  <div class="contact-card" id="contactCard" role="dialog" aria-label="contact">
+    <h3>CONTACT</h3>
+    <div class="contact-list">
+      <div class="contact-row">
+        <div class="contact-info"><div class="name">Hj. Shuhaimi</div><div class="role">Bapa</div></div>
+        <div class="contact-actions"><a href="https://wa.me/+60199150821" target="_blank" aria-label="whatsapp"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+60199150821" aria-label="call"><i class="fa-solid fa-phone"></i></a></div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-info"><div class="name">Syafiq</div><div class="role">Abang</div></div>
+        <div class="contact-actions"><a href="https://wa.me/+60104070205" target="_blank" aria-label="whatsapp"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+60104070205" aria-label="call"><i class="fa-solid fa-phone"></i></a></div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-info"><div class="name">Amalina</div><div class="role">Kakak</div></div>
+        <div class="contact-actions"><a href="https://wa.me/+601137426966" target="_blank" aria-label="whatsapp"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+601137426966" aria-label="call"><i class="fa-solid fa-phone"></i></a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- bottom bar -->
+  <div class="bottom-bar" role="navigation" aria-label="tindakan">
+    <div class="icon-btn" id="callBtn"><i class="fa-solid fa-phone"></i><span>Hubungi</span></div>
+
+    <div class="icon-btn" id="mapBtn">
+      <i class="fa-solid fa-location-dot"></i><span>Lokasi</span>
+      <div class="map-popup" id="mapPopup" style="display:none;position:absolute;bottom:70px;left:50%;transform:translateX(-50%);background:#e8dcc6;color:#222;padding:12px;border-radius:12px;width:260px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.12);">
+        <h4 style="margin:0 0 6px;font-family:'Playfair Display',serif;color:#1f1f1f">Lokasi</h4>
+        <p style="margin:0 0 10px;font-size:14px;color:#6b5f50">White House Event Space, Dungun</p>
+        <a href="https://maps.app.goo.gl/Z2F3c86dVen1ciR29" target="_blank" style="display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;text-decoration:none;padding:8px;border-radius:8px;margin:6px auto;max-width:200px;gap:8px"><i class="fa-solid fa-map-location-dot"></i><span>Google Maps</span></a>
+        <a href="https://ul.waze.com/ul?venue_id=67764271.677839321.39155974" target="_blank" style="display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;text-decoration:none;padding:8px;border-radius:8px;margin:6px auto;max-width:200px;gap:8px"><i class="fa-brands fa-waze"></i><span>Waze</span></a>
+      </div>
+    </div>
+
+    <div class="icon-btn" id="bottomRsvpBtn"><i class="fa-regular fa-envelope"></i><span>RSVP</span></div>
+  </div>
+
+  <!-- popup small for RSVP choices -->
+  <div id="popupRsvp" class="map-popup" style="display:none;position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#e8dcc6;color:#222;padding:12px;border-radius:12px;width:260px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.12);">
+    <h4 style="margin:0 0 6px;font-family:'Playfair Display',serif;color:#1f1f1f">RSVP</h4>
+    <p style="margin:0 0 10px;font-size:14px;color:#6b5f50">Pilih tindakan untuk RSVP atau hantarkan ucapan.</p>
+    <a id="openExternalRsvp" href="#" style="display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;text-decoration:none;padding:8px;border-radius:8px;margin:6px auto;max-width:200px;gap:8px"><i class="fa-solid fa-clipboard-list"></i><span>Isi RSVP</span></a>
+    <a id="openUcapan" href="#" style="display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;text-decoration:none;padding:8px;border-radius:8px;margin:6px auto;max-width:200px;gap:8px"><i class="fa-solid fa-pencil"></i><span>Hantar Ucapan</span></a>
+  </div>
+
+  <!-- popup iframe RSVP (uses form POST via hidden iframe to avoid CORS preflight) -->
+  <div id="popupRsvpIframe" class="map-popup" style="display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#e8dcc6;color:#222;padding:12px;border-radius:12px;width:95%;max-width:420px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.12);z-index:10000;">
+    <h4 style="margin:0 0 6px;font-family:'Playfair Display',serif;color:#1f1f1f">Isi RSVP</h4>
+    <p style="margin:0 0 10px;font-size:14px;color:#6b5f50">Sila lengkapkan borang di bawah.</p>
+    <button id="closeRsvpIframe" aria-label="Tutup" style="position:absolute;top:10px;right:12px;background:transparent;border:none;font-size:20px;color:#333;cursor:pointer;z-index:10001">&times;</button>
+
+    <form id="rsvpInlineForm" style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+      <input id="rsvp_nama" name="nama" type="text" placeholder="Nama penuh" required style="padding:10px;border-radius:8px;border:1px solid #ddd;font-size:14px" />
+      <input id="rsvp_jumlah" name="jumlah" type="number" min="1" placeholder="Bilangan ahli (cth: 2)" value="1" required style="padding:10px;border-radius:8px;border:1px solid #ddd;font-size:14px" />
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:4px">
+        <label style="display:flex;align-items:center;gap:6px"><input type="radio" name="hadir" value="Hadir" checked /> Hadir</label>
+        <label style="display:flex;align-items:center;gap:6px"><input type="radio" name="hadir" value="Tidak Hadir" /> Tidak Hadir</label>
+      </div>
+
+      <button id="rsvpSubmit" type="submit" class="btn" style="margin-top:6px;background:var(--accent);color:#fff;padding:10px 12px;border-radius:10px;border:none">Hantar RSVP</button>
+    </form>
+
+    <div id="rsvpStatus" style="margin-top:8px;font-size:13px;color:#333;display:none"></div>
+  </div>
+
+  <!-- ucapan form -->
+  <div id="ucapanForm" class="map-popup" aria-label="ucapan" style="display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#e8dcc6;color:#222;padding:12px;border-radius:12px;width:95%;max-width:420px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.12);z-index:10000;">
+    <h4 style="margin:0 0 6px;font-family:'Playfair Display',serif;color:#1f1f1f">Hantar Ucapan</h4>
+    <p style="margin:0 0 10px;font-size:14px;color:#6b5f50">Tulis nama dan ucapan anda untuk Isma &amp; Fikri.</p>
+    <button id="closeUcapanBtn" aria-label="Tutup" style="position:absolute;top:10px;right:12px;background:transparent;border:none;font-size:20px;color:#333;cursor:pointer;z-index:10001">&times;</button>
+    <input id="ucap_name" type="text" placeholder="Nama anda" style="width:100%;padding:8px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px">
+    <textarea id="ucap_text" placeholder="Ucapan untuk Isma & Fikri" rows="3" style="width:100%;padding:8px;border-radius:8px;border:1px solid #ddd;margin-bottom:8px"></textarea>
+    <a id="submitUcapan" href="#" style="display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;text-decoration:none;padding:8px;border-radius:8px;margin:6px auto;max-width:200px;gap:8px">Hantar</a>
+    <div id="ucapanStatus" style="margin-top:8px;font-size:13px;color:#333;display:none"></div>
+  </div>
+
+  <!-- hidden iframe for form POST -->
+  <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+<script>
+(function(){
+  // ------------- CONFIG -------------
+  const RSVP_WS_URL = 'https://script.google.com/macros/s/AKfycbzDYI9RXDgtm0E6Li32k8tpsgzYn9WKA3JATB5UUdNbd2cxXLLUM6ARSliRikx-Cx4d/exec';
+  const UCAPAN_WS_URL = 'https://script.google.com/macros/s/AKfycbzDYI9RXDgtm0E6Li32k8tpsgzYn9WKA3JATB5UUdNbd2cxXLLUM6ARSliRikx-Cx4d/exec';
+
+  // Auto-enter settings
+  const AUTO_ENTER = true;           // true = auto buka tanpa tekan button
+  const AUTO_ENTER_DELAY_MS = 500;   // delay sebelum buka (ms). 0 = segera
+
+  // ---------- helpers ----------
+  function escapeHtml(s){ if (typeof s !== 'string') return s||''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+  function showStatus(el, msg, ok){ if(!el) return; el.style.display='block'; el.textContent = msg; el.style.color = ok ? '#0a7a00' : '#b21b1b'; }
+
+  // ---------- Image modal ----------
+  const images = document.querySelectorAll('.grid img');
+  const imageModal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImg');
+  const imageModalClose = document.getElementById('imageModalClose');
+  if(images && images.forEach){
+    images.forEach(function(img){ img.addEventListener('click', function(){ if(imageModal && modalImg){ modalImg.src = img.src; imageModal.style.display='block'; imageModal.setAttribute('aria-hidden','false'); } }); });
+  }
+  if(imageModalClose) imageModalClose.addEventListener('click', function(){ if(imageModal){ imageModal.style.display='none'; imageModal.setAttribute('aria-hidden','true'); } });
+  window.addEventListener('click', function(ev){ if(ev.target === imageModal) { imageModal.style.display='none'; imageModal.setAttribute('aria-hidden','true'); } });
+
+  // ---------- bottom bar behaviour ----------
+  const callBtn = document.getElementById('callBtn');
+  const mapBtn = document.getElementById('mapBtn');
+  const bottomRsvpBtn = document.getElementById('bottomRsvpBtn');
+  const contactCard = document.getElementById('contactCard');
+  const mapPopup = document.getElementById('mapPopup');
+  const popupRsvp = document.getElementById('popupRsvp');
+  const popupRsvpIframe = document.getElementById('popupRsvpIframe');
+  const ucapanForm = document.getElementById('ucapanForm');
+
+  function hideAllPopups(){ [contactCard,mapPopup,popupRsvp,popupRsvpIframe,ucapanForm].forEach(e=>{ if(e) e.style.display='none'; }); }
+
+  if(callBtn) callBtn.addEventListener('click', function(e){ e.stopPropagation(); hideAllPopups(); contactCard.style.display = (contactCard.style.display==='block')? 'none':'block'; });
+  if(mapBtn) mapBtn.addEventListener('click', function(e){ e.stopPropagation(); hideAllPopups(); mapPopup.style.display = (mapPopup.style.display==='block')? 'none':'block'; });
+  if(bottomRsvpBtn) bottomRsvpBtn.addEventListener('click', function(e){ e.stopPropagation(); hideAllPopups(); popupRsvp.style.display = (popupRsvp.style.display==='block')? 'none':'block'; });
+
+  document.addEventListener('click', function(e){
+    const popupEls = [contactCard,mapPopup,popupRsvp,popupRsvpIframe,ucapanForm];
+    let inside=false;
+    popupEls.forEach(p=>{ if(p && p.contains && p.contains(e.target)) inside=true; });
+    const btns=[callBtn,mapBtn,bottomRsvpBtn];
+    btns.forEach(b=>{ if(b && (b===e.target || b.contains(e.target))) inside=true; });
+    if(!inside) hideAllPopups();
+  });
+
+  // open external rsvp iframe & ucapan toggles
+  const openExternalRsvp = document.getElementById('openExternalRsvp');
+  const openUcapanBtn = document.getElementById('openUcapan');
+  if(openExternalRsvp) openExternalRsvp.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); popupRsvp.style.display='none'; popupRsvpIframe.style.display = (popupRsvpIframe.style.display==='block')? 'none':'block'; const el = document.getElementById('rsvp_nama'); if(el) el.focus(); });
+  if(openUcapanBtn) openUcapanBtn.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); popupRsvp.style.display='none'; ucapanForm.style.display = (ucapanForm.style.display==='block')? 'none':'block'; const el = document.getElementById('ucap_name'); if(el) el.focus(); });
+
+  // close popup buttons
+  const closeRsvpIframe = document.getElementById('closeRsvpIframe');
+  if(closeRsvpIframe) closeRsvpIframe.addEventListener('click', function(e){ e.stopPropagation(); popupRsvpIframe.style.display='none'; });
+
+  const closeUcapanBtn = document.getElementById('closeUcapanBtn');
+  if(closeUcapanBtn) closeUcapanBtn.addEventListener('click', function(e){ e.stopPropagation(); ucapanForm.style.display='none'; });
+
+  // ---------- JSONP loader for ucapan list ----------
+  const bubblesContainer = document.getElementById('bubblesContainer');
+  window.__ucapan_jsonp_cb = function(data){
+    try {
+      if(!data || !Array.isArray(data.items)) return;
+      renderUcapanList(data.items);
+    } catch(e){ console.warn('jsonp cb error', e); }
+  };
+
+  function loadUcapan_JSONP_thenRender(){
+    const cbName = '__ucapan_jsonp_cb';
+    const src = UCAPAN_WS_URL + (UCAPAN_WS_URL.indexOf('?') === -1 ? '?' : '&') + 'api=ucapan&callback=' + cbName + '&_=' + Date.now();
+    const s = document.createElement('script');
+    s.src = src;
+    s.onerror = function(){ console.warn('JSONP load error for', src); s.remove(); };
+    document.body.appendChild(s);
+    setTimeout(()=>{ try{ document.body.removeChild(s); }catch(e){} }, 9000);
+  }
+
+  function renderUcapanList(items){
+    try {
+      bubblesContainer.innerHTML = '';
+      // Ensure newest-first. Heuristic: if server returns oldest-first, reverse it.
+      let arr = Array.from(items || []);
+      try {
+        if(arr.length >= 2){
+          const a = new Date(arr[0].timestamp || arr[0].Timestamp || arr[0].ts || 0);
+          const b = new Date(arr[arr.length-1].timestamp || arr[arr.length-1].Timestamp || arr[arr.length-1].ts || 0);
+          if(!isNaN(a) && !isNaN(b) && a < b) arr = arr.reverse();
+        }
+      } catch(e){ /* ignore */ }
+
+      arr.forEach(it => {
+        const nama = it.nama || it.Nama || it.name || '';
+        const ucapan = it.ucapan || it.Ucapan || it.message || '';
+        const ts = it.timestamp || it.Timestamp || it.ts || '';
+        const bubble = document.createElement('div'); bubble.className='bubble';
+        const timeLabel = ts ? (new Date(ts)).toLocaleString() : (new Date()).toLocaleString();
+        bubble.innerHTML = '<div class="meta">'+escapeHtml(nama)+' • <span style="font-size:11px;color:#999">'+escapeHtml(timeLabel)+'</span></div><div class="msg">'+escapeHtml(ucapan)+'</div>';
+        bubblesContainer.appendChild(bubble);
+      });
+
+      // after render, scroll to top to show newest (we insert newest at top)
+      setTimeout(()=>{ try{ bubblesContainer.scrollTo({ top: 0, behavior:'smooth' }); }catch(e){} }, 60);
+    } catch(e){ console.warn('renderUcapanList error', e); }
+  }
+
+  // initial load
+  loadUcapan_JSONP_thenRender();
+
+  // ---------- postFormNoCORS: submit via hidden form -> target iframe ----------
+  function postFormNoCORS(url, data, callback) {
+    try {
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = url;
+      form.target = 'hidden_iframe';
+      form.style.display = 'none';
+      for(const k in data){
+        if(!Object.prototype.hasOwnProperty.call(data,k)) continue;
+        const inp = document.createElement('input');
+        inp.type = 'hidden';
+        inp.name = k;
+        inp.value = data[k];
+        form.appendChild(inp);
+      }
+      document.body.appendChild(form);
+
+      const iframe = document.getElementById('hidden_iframe');
+      function onLoad(){
+        try { iframe.removeEventListener('load', onLoad); } catch(e){}
+        setTimeout(()=>{ if(typeof callback === 'function') callback(true); try{ document.body.removeChild(form); }catch(e){} }, 300);
+      }
+      iframe.addEventListener('load', onLoad);
+      form.submit();
+
+      setTimeout(()=>{ try{ iframe.removeEventListener('load', onLoad);}catch(e){}; if(typeof callback === 'function') callback(false); try{ document.body.removeChild(form);}catch(e){} }, 8000);
+    } catch(err){
+      console.warn('postFormNoCORS error', err);
+      if(typeof callback === 'function') callback(false);
+    }
+  }
+
+  // ---------- RSVP submit (uses postFormNoCORS) ----------
+  const rsvpForm = document.getElementById('rsvpInlineForm');
+  const rsvpStatus = document.getElementById('rsvpStatus');
+  if (rsvpForm){
+    rsvpForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      if (rsvpStatus) rsvpStatus.style.display='none';
+      const nama = (document.getElementById('rsvp_nama')||{}).value.trim();
+      const jumlah = (document.getElementById('rsvp_jumlah')||{}).value.trim();
+      const hadir = (rsvpForm.querySelector('input[name="hadir"]:checked')||{}).value || '';
+
+      if(!nama || !jumlah){ showStatus(rsvpStatus, 'Sila lengkapkan nama dan jumlah ahli.', false); return; }
+
+      showStatus(rsvpStatus, 'Menghantar...', true);
+      const payload = { nama: nama, jumlah: jumlah, hadir: hadir, type: 'rsvp' };
+
+      postFormNoCORS(RSVP_WS_URL, payload, function(ok){
+        if(ok){ showStatus(rsvpStatus, 'RSVP dihantar. Terima kasih!', true); try{ rsvpForm.reset(); }catch(e){} setTimeout(()=>{ popupRsvpIframe.style.display='none'; }, 800); }
+        else { showStatus(rsvpStatus, 'Gagal hantar RSVP. Sila cuba semula.', false); }
+      });
+    });
+  }
+
+  // ---------- Ucapan submit ----------
+  const submitUcapan = document.getElementById('submitUcapan');
+  const ucapanStatus = document.getElementById('ucapanStatus');
+  if(submitUcapan){
+    submitUcapan.addEventListener('click', function(e){
+      e.preventDefault();
+      const nameEl = document.getElementById('ucap_name');
+      const textEl = document.getElementById('ucap_text');
+      const name = nameEl ? nameEl.value.trim() : '';
+      const text = textEl ? textEl.value.trim() : '';
+      if(!name || !text){ showStatus(ucapanStatus, 'Sila isi nama dan ucapan.', false); return; }
+
+      // optimistic bubble (insert at top)
+      try {
+        const tsNow = new Date().toISOString();
+        const container = document.getElementById('bubblesContainer');
+        const bubble = document.createElement('div'); bubble.className = 'bubble';
+        bubble.innerHTML = '<div class="meta">'+escapeHtml(name)+' • <span style="font-size:11px;color:#999">'+(new Date(tsNow)).toLocaleString()+'</span></div><div class="msg">'+escapeHtml(text)+'</div>';
+        if(container) container.insertBefore(bubble, container.firstChild);
+        setTimeout(()=>{ try{ container.scrollTo({ top: 0, behavior:'smooth' }); }catch(e){} }, 40);
+      } catch(e){ console.warn(e); }
+
+      // send to server via hidden form POST
+      const payload = { nama: name, ucapan: text, timestamp: new Date().toISOString(), type: 'ucapan' };
+      postFormNoCORS(UCAPAN_WS_URL, payload, function(ok){
+        if(ok){
+          showStatus(ucapanStatus, 'Ucapan dihantar dan disimpan.', true);
+          // reload from server to canonicalise list
+          setTimeout(loadUcapan_JSONP_thenRender, 350);
+        } else {
+          showStatus(ucapanStatus, 'Ucapan dipaparkan tetapi tidak dapat disahkan oleh server.', false);
+        }
+      });
+
+      // cleanup UI
+      if(nameEl) nameEl.value='';
+      if(textEl) textEl.value='';
+      if(ucapanForm) ucapanForm.style.display='none';
+    });
+  }
+
+  // ---------- countdown ----------
+  function pad(n){ return String(n).padStart(2,'0'); }
+  const eventDate = new Date('2026-01-03T11:00:00+08:00');
+  function updateCountdown(){
+    const now = new Date();
+    let diff = Math.max(0, Math.floor((eventDate - now) / 1000));
+    const days = Math.floor(diff / 86400); diff %= 86400;
+    const hours = Math.floor(diff / 3600); diff %= 3600;
+    const mins = Math.floor(diff / 60); const secs = diff % 60;
+    const daysEl = document.getElementById('days');
+    const hoursEl = document.getElementById('hours');
+    const minsEl = document.getElementById('mins');
+    const secsEl = document.getElementById('secs');
+    if(daysEl) daysEl.textContent = days;
+    if(hoursEl) hoursEl.textContent = pad(hours);
+    if(minsEl) minsEl.textContent = pad(mins);
+    if(secsEl) secsEl.textContent = pad(secs);
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // ---------- ENTRY / DOOR / AUTO-ENTER ----------
+  const body = document.body;
+  const overlay = document.getElementById('entryOverlay');
+  const enterBtn = document.getElementById('enterBtn');
+  const leftDoor = document.querySelector('.door.left');
+  const rightDoor = document.querySelector('.door.right');
+  const app = document.getElementById('appRoot');
+
+  function disableScroll() {
+    // lock scroll while overlay shown
+    body.style.overflow = 'hidden';
+    app.setAttribute('aria-hidden','true');
+  }
+  function enableScroll() {
+    body.style.overflow = '';
+    app.setAttribute('aria-hidden','false');
+  }
+  // initial lock
+  disableScroll();
+
+  function enterAnimation() {
+    if (body.classList.contains('entered')) return;
+    body.classList.add('entered');
+    const ANIM_MS = 1000;
+    setTimeout(()=> {
+      if (overlay) {
+        overlay.classList.add('hidden');
+        overlay.style.pointerEvents = 'none';
+      }
+      if (leftDoor) leftDoor.style.display = 'none';
+      if (rightDoor) rightDoor.style.display = 'none';
+      enableScroll();
+    }, ANIM_MS);
+  }
+
+  // click fallback
+  if (enterBtn) {
+    enterBtn.addEventListener('click', function(e){ enterAnimation(); });
+    enterBtn.addEventListener('keyup', function(e){ if(e.key === 'Enter' || e.key === ' ') enterAnimation(); });
+  }
+
+  // reduced motion preference: skip animation
+  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (mq && mq.matches) {
+    body.classList.add('entered');
+    if (overlay) overlay.style.display = 'none';
+    if (leftDoor) leftDoor.style.display = 'none';
+    if (rightDoor) rightDoor.style.display = 'none';
+    enableScroll();
+  } else {
+    // AUTO-ENTER logic
+    if (AUTO_ENTER) {
+      function tryAutoEnter(){
+        if (!overlay) return;
+        setTimeout(()=> { enterAnimation(); }, Math.max(0, AUTO_ENTER_DELAY_MS || 0));
+      }
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(tryAutoEnter, 60);
+      } else {
+        window.addEventListener('load', tryAutoEnter, { once: true });
+        document.addEventListener('DOMContentLoaded', function(){ setTimeout(tryAutoEnter, 60); }, { once: true });
+      }
+    } else {
+      overlay.addEventListener('touchmove', function(e){ e.preventDefault(); }, { passive:false });
+      if (overlay) overlay.addEventListener('click', function(ev){ if(ev.target === overlay) enterAnimation(); });
+    }
+  }
+
+  // expose manual trigger
+  window.forceEnter = enterAnimation;
+
+})();
+</script>
+</body>
+</html>
