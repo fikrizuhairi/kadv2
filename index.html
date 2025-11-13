@@ -20,35 +20,33 @@
     }
 
     @font-face {
-  font-family: 'FlashFont';
-  src: url('the flash TTF.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-
+      font-family: 'FlashFont';
+      src: url('the flash TTF.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
 
     /* ---------- FIXED BACKGROUND ---------- */
-.bg-video {
-  position: fixed;
-  inset: 0;
-  z-index: -5;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff; /* fallback */
-  overflow: hidden;
-}
-
-.bg-video img {
-  max-width: 100%;
-  max-height: 100vh;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  object-position: center center;
-  display: block;
-}
+    .bg-video {
+      position: fixed;
+      inset: 0;
+      z-index: -5;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff; /* fallback */
+      overflow: hidden;
+    }
+    .bg-video img {
+      max-width: 100%;
+      max-height: 100vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      object-position: center center;
+      display: block;
+    }
 
     /* ---------- MAIN APP (scrolls above fixed bg) ---------- */
     .app{ max-width:420px; margin:auto; position:relative; min-height:100vh; scroll-snap-type:y mandatory; overflow-y:auto; -webkit-overflow-scrolling:touch; padding-bottom:140px; z-index:1; }
@@ -64,10 +62,6 @@
     .parent-name,.couple-name{ font-family:'Playfair Display',serif; font-size:18px; color:#2b2b2b; margin-bottom:8px; text-align:center; font-weight:700 }
     h2{ font-size:18px; font-weight:600; color:var(--accent); margin:16px 0 8px; text-align:center }
     p{ font-size:15px; color:#222; line-height:1.6; margin-bottom:8px; text-align:center }
-
-    .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:10px }
-    .grid img{ width:100%; height:90px; object-fit:cover; border-radius:8px; cursor:pointer; transition:0.3s }
-    .grid img:hover{ opacity:0.95; transform:scale(1.02) }
 
     .modal{ display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.8) }
     .modal-content{ margin:auto; display:block; max-width:90%; max-height:90%; border-radius:10px }
@@ -112,13 +106,24 @@
     .bubbles::-webkit-scrollbar-track { background: transparent; }
 
     /* photo slider styles (mobile-friendly) */
-    .photo-slider{ width:100%; max-width:360px; margin:12px auto; overflow:hidden; border-radius:12px; }
+    .photo-slider{ width:100%; max-width:360px; margin:12px auto; overflow:hidden; border-radius:12px; position:relative; }
     .photo-slider .slides{ display:flex; transition:transform 400ms ease; will-change:transform; }
     .photo-slider .slide-item{ min-width:100%; flex:0 0 100%; display:flex; align-items:center; justify-content:center; height:200px; }
-    .photo-slider .slide-item img{ width:100%; height:100%; object-fit:cover; border-radius:12px; display:block; }
+    .photo-slider .slide-item img{ width:100%; height:100%; object-fit:cover; border-radius:12px; display:block; cursor:pointer; }
     .slider-dots{ display:flex; gap:6px; justify-content:center; margin-top:8px; }
     .slider-dots button{ width:8px; height:8px; border-radius:50%; border:none; background:#ddd; padding:0; }
     .slider-dots button.active{ background:var(--accent); }
+
+    /* slider arrow buttons */
+    .slider-btn{ position:absolute; top:50%; transform:translateY(-50%); width:36px; height:36px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.45); color:#fff; font-size:22px; cursor:pointer; z-index:3; }
+    .slider-btn.prev{ left:8px; }
+    .slider-btn.next{ right:8px; }
+    .slider-btn:active{ transform:translateY(-50%) scale(0.96); }
+
+    @media (max-width:420px){
+      .photo-slider .slide-item{ height:180px; }
+      .slider-btn{ width:32px; height:32px; font-size:18px; }
+    }
 
     /* ============================
        MAWADDAH-STYLE OPENING OVERLAY
@@ -225,11 +230,13 @@
 
         <h2>Gambar</h2>
         <div class="photo-slider" aria-label="Galeri Gambar">
+          <button class="slider-btn prev" aria-label="Sebelum">‹</button>
           <div class="slides">
             <div class="slide-item"><img src="https://i.postimg.cc/3RRKKKHH/265f0c1f-9af7-4fb7-956d-50d064a0eba4.jpg" alt="Foto 1"></div>
             <div class="slide-item"><img src="https://i.postimg.cc/KcP9ZtJy/A24C2718-C6BC-4653-B516-9741E7B213BF-1-105-c.jpg" alt="Foto 2"></div>
             <div class="slide-item"><img src="https://i.postimg.cc/T1VPHTMh/8EC8700E-DA47-4FF0-9F84-2FCE47B1A986-1-105-c.jpg" alt="Foto 3"></div>
           </div>
+          <button class="slider-btn next" aria-label="Seterusnya">›</button>
           <div class="slider-dots" aria-hidden="true"></div>
         </div>
 
@@ -249,12 +256,11 @@
           <div><div class="num" id="secs">0</div><div class="lbl">Saat</div></div>
         </div>
 
-<!-- ====== Video player: autoplay (muted) placed under countdown ====== -->
-      <div id="videoContainer" style="margin-top:12px;text-align:center;">
-      <div id="ytPlayer" style="width:100%;max-width:420px;margin:auto;"></div>
-    </div>
-<!-- ================================================================== -->
-
+        <!-- ====== Video player: autoplay (muted) placed under countdown ====== -->
+        <div id="videoContainer" style="margin-top:12px;text-align:center;">
+          <div id="ytPlayer" style="width:100%;max-width:420px;margin:auto;"></div>
+        </div>
+        <!-- ================================================================== -->
 
         <footer>Terima kasih — Kami hargai kehadiran dan doa anda.</footer>
       </div>
@@ -346,13 +352,12 @@
   const UCAPAN_WS_URL = 'https://script.google.com/macros/s/AKfycbzDYI9RXDgtm0E6Li32k8tpsgzYn9WKA3JATB5UUdNbd2cxXLLUM6ARSliRikx-Cx4d/exec';
 
   // Auto-enter + timing settings (ubah ikut citarasa)
-  const AUTO_ENTER = true;           // auto buka tanpa tekan button
-  const OVERLAY_SHOW_MS = 1200;      // overlay text stays front (ms)
-  const AUTO_ENTER_DELAY_MS = 0;     // extra delay before starting door animation (after overlay show)
-  const DOOR_ANIM_MS = 100;         // kept from original — used by flow (ms)
-  const OVERLAY_FADE_MS = 800;       // overlay fade duration (ms)
+  const AUTO_ENTER = true;
+  const OVERLAY_SHOW_MS = 1200;
+  const AUTO_ENTER_DELAY_MS = 0;
+  const DOOR_ANIM_MS = 100;
+  const OVERLAY_FADE_MS = 800;
 
-  // expose overlay-fade duration to CSS variable so transition uses this value
   document.documentElement.style.setProperty('--overlay-fade-ms', OVERLAY_FADE_MS + 'ms');
 
   // ---------- helpers ----------
@@ -445,7 +450,7 @@
         const ts = it.timestamp || it.Timestamp || it.ts || '';
         const bubble = document.createElement('div'); bubble.className='bubble';
         const timeLabel = ts ? (new Date(ts)).toLocaleString() : (new Date()).toLocaleString();
-        bubble.innerHTML = '<div class="meta">'+escapeHtml(nama)+' • <span style="font-size:11px;color:#999">'+escapeHtml(timeLabel)+'</span></div><div class="msg">'+escapeHtml(ucapan)+'</div>';
+        bubble.innerHTML = '<div class=\"meta\">'+escapeHtml(nama)+' • <span style=\"font-size:11px;color:#999\">'+escapeHtml(timeLabel)+'</span></div><div class=\"msg\">'+escapeHtml(ucapan)+'</div>';
         bubblesContainer.appendChild(bubble);
       });
 
@@ -457,86 +462,79 @@
   loadUcapan_JSONP_thenRender();
 
   function postFormNoCORS(url, data, callback) {
-  try {
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = url;
-    form.target = 'hidden_iframe';
-    form.style.display = 'none';
+    try {
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = url;
+      form.target = 'hidden_iframe';
+      form.style.display = 'none';
 
-    for (const k in data){
-      const inp = document.createElement('input');
-      inp.type = 'hidden';
-      inp.name = k;
-      inp.value = data[k];
-      form.appendChild(inp);
-    }
-    document.body.appendChild(form);
+      for (const k in data){
+        const inp = document.createElement('input');
+        inp.type = 'hidden';
+        inp.name = k;
+        inp.value = data[k];
+        form.appendChild(inp);
+      }
+      document.body.appendChild(form);
 
-    const iframe = document.getElementById('hidden_iframe');
-    let called = false;
+      const iframe = document.getElementById('hidden_iframe');
+      let called = false;
 
-    function onLoad(){
-      if (called) return;
-      called = true;
-      try { iframe.removeEventListener('load', onLoad); } catch(e){}
-      setTimeout(()=>{ 
-        if(callback) callback(true); 
-        try{ document.body.removeChild(form); }catch(e){} 
-      }, 150); // ← lebih cepat
-    }
+      function onLoad(){
+        if (called) return;
+        called = true;
+        try { iframe.removeEventListener('load', onLoad); } catch(e){}
+        setTimeout(()=>{ 
+          if(callback) callback(true); 
+          try{ document.body.removeChild(form); }catch(e){} 
+        }, 150);
+      }
 
-    iframe.addEventListener('load', onLoad);
-    form.submit();
+      iframe.addEventListener('load', onLoad);
+      form.submit();
 
-    // fallback lebih pendek (4 saat sahaja)
-    setTimeout(()=>{
-      if (called) return;
-      called = true;
-      try{ iframe.removeEventListener('load', onLoad);}catch(e){}
+      setTimeout(()=>{
+        if (called) return;
+        called = true;
+        try{ iframe.removeEventListener('load', onLoad);}catch(e){}
+        if(callback) callback(false);
+        try{ document.body.removeChild(form); }catch(e){}
+      }, 4000);
+    } catch(err){
+      console.warn('postFormNoCORS error', err);
       if(callback) callback(false);
-      try{ document.body.removeChild(form); }catch(e){}
-    }, 4000);  // ← bukan lagi 8000ms
-  } catch(err){
-    console.warn('postFormNoCORS error', err);
-    if(callback) callback(false);
+    }
   }
-}
 
   // ---------- RSVP submit (uses postFormNoCORS) ----------
   const rsvpForm = document.getElementById('rsvpInlineForm');
   const rsvpStatus = document.getElementById('rsvpStatus');
   if (rsvpForm){
-  rsvpForm.addEventListener('submit', function(e){
-  e.preventDefault();
-  rsvpStatus.style.display='none';
+    rsvpForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      rsvpStatus.style.display='none';
 
-  const nama = document.getElementById('rsvp_nama').value.trim();
-  const jumlah = document.getElementById('rsvp_jumlah').value.trim();
-  const hadir = rsvpForm.querySelector('input[name="hadir"]:checked').value;
+      const nama = document.getElementById('rsvp_nama').value.trim();
+      const jumlah = document.getElementById('rsvp_jumlah').value.trim();
+      const hadir = rsvpForm.querySelector('input[name="hadir"]:checked').value;
 
-  if(!nama || !jumlah){
-    showStatus(rsvpStatus, 'Sila lengkapkan nama & jumlah.', false);
-    return;
-  }
+      if(!nama || !jumlah){
+        showStatus(rsvpStatus, 'Sila lengkapkan nama & jumlah.', false);
+        return;
+      }
 
-  // 🎉 TERUS bagi feedback — tak tunggu server
-  showStatus(rsvpStatus, 'RSVP dihantar. Terima kasih!', true);
-  rsvpForm.reset();
+      showStatus(rsvpStatus, 'RSVP dihantar. Terima kasih!', true);
+      rsvpForm.reset();
+      setTimeout(()=>{ popupRsvpIframe.style.display='none'; }, 600);
 
-  // popup tutup laju (600ms)
-  setTimeout(()=>{ popupRsvpIframe.style.display='none'; }, 600);
-
-  // server submit (jika gagal, update balik)
-  const payload = { nama, jumlah, hadir, type:'rsvp' };
-
-  postFormNoCORS(RSVP_WS_URL, payload, function(ok){
-    if(!ok){
-      showStatus(rsvpStatus, 'Server gagal sahkan RSVP. Cuba semula.', false);
-    }
-  });
-});
-
+      const payload = { nama, jumlah, hadir, type:'rsvp' };
+      postFormNoCORS(RSVP_WS_URL, payload, function(ok){
+        if(!ok){
+          showStatus(rsvpStatus, 'Server gagal sahkan RSVP. Cuba semula.', false);
+        }
+      });
+    });
   }
 
   // ---------- Ucapan submit ----------
@@ -556,24 +554,21 @@
         const tsNow = new Date().toISOString();
         const container = document.getElementById('bubblesContainer');
         const bubble = document.createElement('div'); bubble.className = 'bubble';
-        bubble.innerHTML = '<div class="meta">'+escapeHtml(name)+' • <span style="font-size:11px;color:#999">'+(new Date(tsNow)).toLocaleString()+'</span></div><div class="msg">'+escapeHtml(text)+'</div>';
+        bubble.innerHTML = '<div class=\"meta\">'+escapeHtml(name)+' • <span style=\"font-size:11px;color:#999\">'+(new Date(tsNow)).toLocaleString()+'</span></div><div class=\"msg\">'+escapeHtml(text)+'</div>';
         if(container) container.insertBefore(bubble, container.firstChild);
         setTimeout(()=>{ try{ container.scrollTo({ top: 0, behavior:'smooth' }); }catch(e){} }, 40);
       } catch(e){ console.warn(e); }
 
-      // send to server via hidden form POST
       const payload = { nama: name, ucapan: text, timestamp: new Date().toISOString(), type: 'ucapan' };
       postFormNoCORS(UCAPAN_WS_URL, payload, function(ok){
         if(ok){
           showStatus(ucapanStatus, 'Ucapan dihantar dan disimpan.', true);
-          // reload from server to canonicalise list
           setTimeout(loadUcapan_JSONP_thenRender, 350);
         } else {
           showStatus(ucapanStatus, 'Ucapan dipaparkan tetapi tidak dapat disahkan oleh server.', false);
         }
       });
 
-      // cleanup UI
       if(nameEl) nameEl.value='';
       if(textEl) textEl.value='';
       if(ucapanForm) ucapanForm.style.display='none';
@@ -601,35 +596,27 @@
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
-    // ---------- NEW: OPENING OVERLAY FLOW (robust) ----------
+  // ---------- NEW: OPENING OVERLAY FLOW (robust) ----------
   (function openingFlow(){
     const openingOverlay = document.getElementById('openingOverlay');
     const app = document.getElementById('appRoot');
 
-    // lock scroll while overlay visible
     document.documentElement.style.overflow = 'hidden';
     document.body.style.overflow = 'hidden';
     if (app) app.setAttribute('aria-hidden','true');
 
     function kickoff(){
-      // add class to trigger CSS slide-away
       document.body.classList.add('opening-opened');
-
-      // Immediately allow pointer events through and enable scrolling
-      // so user can interact while panels animate away.
       if (openingOverlay) {
         openingOverlay.style.pointerEvents = 'none';
-        openingOverlay.classList.add('fade-out'); // start fade-out visually
+        openingOverlay.classList.add('fade-out');
       }
       document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
       if (app) app.setAttribute('aria-hidden','false');
 
-      // schedule removal after fade time (safe fallback if transitionend not fired)
       const safeRemoveDelay = Math.max(DOOR_ANIM_MS, OVERLAY_FADE_MS) + 120;
-      setTimeout(()=>{
-        try{ openingOverlay && openingOverlay.remove(); }catch(e){}
-      }, safeRemoveDelay);
+      setTimeout(()=>{ try{ openingOverlay && openingOverlay.remove(); }catch(e){} }, safeRemoveDelay);
     }
 
     if (AUTO_ENTER) {
@@ -643,49 +630,32 @@
       if(openingOverlay) openingOverlay.addEventListener('click', kickoff, { once:true });
     }
 
-    // expose manual trigger
     window.forceEnter = kickoff;
   })();
 
-
   // --- YouTube autoplay (muted) + unmute on user gesture ---
   (function(){
-    // load YT iframe API
     if(!document.getElementById('yt-iframe-api')){
       const s = document.createElement('script');
       s.id = 'yt-iframe-api';
       s.src = "https://www.youtube.com/iframe_api";
       document.head.appendChild(s);
     }
-
-    // player var (YT will call onYouTubeIframeAPIReady)
     window.ytPlayer = null;
-
-    // This function is called by the YT API when ready
     window.onYouTubeIframeAPIReady = function(){
       try {
         window.ytPlayer = new YT.Player('ytPlayer', {
           height: '200',
           width: '100%',
-          videoId: 'JmIUdR_fob0', // video ID from your iframe URL
-          playerVars: {
-            autoplay: 1,      // start automatically (muted required by many browsers)
-            controls: 1,
-            rel: 0,
-            modestbranding: 1,
-            playsinline: 1,
-            mute: 1          // start muted so autoplay is allowed
-          },
+          videoId: 'JmIUdR_fob0',
+          playerVars: { autoplay: 1, controls: 1, rel: 0, modestbranding: 1, playsinline: 1, mute: 1 },
           events: {
-            onReady: function(e){
-              try { e.target.playVideo(); } catch(err){ console.warn('play error', err); }
-            }
+            onReady: function(e){ try { e.target.playVideo(); } catch(err){ console.warn('play error', err); } }
           }
         });
       } catch(e){ console.warn('YT player error', e); }
     };
 
-    // Try to unmute and play when user interacts (click / touch) — one-time only
     function tryUnmute(){
       try {
         if(window.ytPlayer && typeof window.ytPlayer.unMute === 'function'){
@@ -698,21 +668,22 @@
     }
     window.addEventListener('click', tryUnmute, { once: true });
     window.addEventListener('touchstart', tryUnmute, { once: true });
-
   })();
 
-
-  // ===== photo slider JS (auto + touch) =====
+  // ===== photo slider JS (auto + touch + arrows + dots) =====
   (function(){
     try{
       const container = document.querySelector('.photo-slider');
-      const slider = container && container.querySelector('.slides');
-      if(!slider) return;
+      if(!container) return;
+      const slider = container.querySelector('.slides');
+      const prevBtn = container.querySelector('.slider-btn.prev');
+      const nextBtn = container.querySelector('.slider-btn.next');
       const slides = slider.children;
       const total = slides.length;
       const dots = container.querySelector('.slider-dots');
       let idx = 0;
-      let autoT;
+      let autoT = null;
+      let animBlocked = false;
 
       // build dots
       for(let i=0;i<total;i++){
@@ -723,14 +694,18 @@
       }
 
       function updateDots(){ Array.from(dots.children).forEach((b,i)=>b.classList.toggle('active', i===idx)); }
-      function go(i){ idx = (i + total) % total; slider.style.transform = 'translateX(-'+(idx*100)+'%)'; updateDots(); }
+      function go(i){ if(animBlocked) return; animBlocked = true; idx = (i + total) % total; slider.style.transform = 'translateX(-'+(idx*100)+'%)'; updateDots(); setTimeout(()=>{ animBlocked=false; }, 450); }
+
+      // prev/next
+      if(prevBtn) prevBtn.addEventListener('click', function(e){ e.stopPropagation(); go(idx-1); });
+      if(nextBtn) nextBtn.addEventListener('click', function(e){ e.stopPropagation(); go(idx+1); });
 
       // auto play
-      function startAuto(){ autoT = setInterval(()=> go(idx+1), 3500); }
-      function stopAuto(){ clearInterval(autoT); }
+      function startAuto(){ stopAuto(); autoT = setInterval(()=> go(idx+1), 3500); }
+      function stopAuto(){ if(autoT) { clearInterval(autoT); autoT = null; } }
       startAuto();
 
-      // pause on hover
+      // pause on hover (desktop)
       container.addEventListener('mouseenter', stopAuto);
       container.addEventListener('mouseleave', startAuto);
 
@@ -740,11 +715,14 @@
       slider.addEventListener('touchmove', function(e){ if(!dragging) return; curX = e.touches[0].clientX; const delta = (curX - startX) / container.clientWidth * 100; slider.style.transform = 'translateX(' + ( -idx*100 + delta ) + '%)'; }, {passive:true});
       slider.addEventListener('touchend', function(){ dragging = false; const diff = curX - startX; if(diff > 50) go(idx-1); else if(diff < -50) go(idx+1); else go(idx); startAuto(); });
 
+      // keyboard support
+      container.tabIndex = 0;
+      container.addEventListener('keydown', function(e){ if(e.key === 'ArrowLeft') go(idx-1); if(e.key === 'ArrowRight') go(idx+1); });
+
       // make first dot active
       updateDots();
     }catch(e){ console.warn('slider init', e); }
   })();
-
 
 })();
 </script>
