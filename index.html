@@ -429,60 +429,87 @@
   // initial load
   loadUcapan_JSONP_thenRender();
 
-  // ---------- postFormNoCORS: submit via hidden form -> target iframe ----------
   function postFormNoCORS(url, data, callback) {
-    try {
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = url;
-      form.target = 'hidden_iframe';
-      form.style.display = 'none';
-      for(const k in data){
-        if(!Object.prototype.hasOwnProperty.call(data,k)) continue;
-        const inp = document.createElement('input');
-        inp.type = 'hidden';
-        inp.name = k;
-        inp.value = data[k];
-        form.appendChild(inp);
-      }
-      document.body.appendChild(form);
+  try {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = url;
+    form.target = 'hidden_iframe';
+    form.style.display = 'none';
 
-      const iframe = document.getElementById('hidden_iframe');
-      function onLoad(){
-        try { iframe.removeEventListener('load', onLoad); } catch(e){}
-        setTimeout(()=>{ if(typeof callback === 'function') callback(true); try{ document.body.removeChild(form); }catch(e){} }, 300);
-      }
-      iframe.addEventListener('load', onLoad);
-      form.submit();
-
-      setTimeout(()=>{ try{ iframe.removeEventListener('load', onLoad);}catch(e){}; if(typeof callback === 'function') callback(false); try{ document.body.removeChild(form);}catch(e){} }, 8000);
-    } catch(err){
-      console.warn('postFormNoCORS error', err);
-      if(typeof callback === 'function') callback(false);
+    for (const k in data){
+      const inp = document.createElement('input');
+      inp.type = 'hidden';
+      inp.name = k;
+      inp.value = data[k];
+      form.appendChild(inp);
     }
+    document.body.appendChild(form);
+
+    const iframe = document.getElementById('hidden_iframe');
+    let called = false;
+
+    function onLoad(){
+      if (called) return;
+      called = true;
+      try { iframe.removeEventListener('load', onLoad); } catch(e){}
+      setTimeout(()=>{ 
+        if(callback) callback(true); 
+        try{ document.body.removeChild(form); }catch(e){} 
+      }, 150); // ← lebih cepat
+    }
+
+    iframe.addEventListener('load', onLoad);
+    form.submit();
+
+    // fallback lebih pendek (4 saat sahaja)
+    setTimeout(()=>{
+      if (called) return;
+      called = true;
+      try{ iframe.removeEventListener('load', onLoad); }catch(e){}
+      if(callback) callback(false);
+      try{ document.body.removeChild(form); }catch(e){}
+    }, 4000);  // ← bukan lagi 8000ms
+  } catch(err){
+    console.warn('postFormNoCORS error', err);
+    if(callback) callback(false);
   }
+}
 
   // ---------- RSVP submit (uses postFormNoCORS) ----------
   const rsvpForm = document.getElementById('rsvpInlineForm');
   const rsvpStatus = document.getElementById('rsvpStatus');
   if (rsvpForm){
-    rsvpForm.addEventListener('submit', function(e){
-      e.preventDefault();
-      if (rsvpStatus) rsvpStatus.style.display='none';
-      const nama = (document.getElementById('rsvp_nama')||{}).value.trim();
-      const jumlah = (document.getElementById('rsvp_jumlah')||{}).value.trim();
-      const hadir = (rsvpForm.querySelector('input[name="hadir"]:checked')||{}).value || '';
+  rsvpForm.addEventListener('submit', function(e){
+  e.preventDefault();
+  rsvpStatus.style.display='none';
 
-      if(!nama || !jumlah){ showStatus(rsvpStatus, 'Sila lengkapkan nama dan jumlah ahli.', false); return; }
+  const nama = document.getElementById('rsvp_nama').value.trim();
+  const jumlah = document.getElementById('rsvp_jumlah').value.trim();
+  const hadir = rsvpForm.querySelector('input[name="hadir"]:checked').value;
 
-      showStatus(rsvpStatus, 'Menghantar...', true);
-      const payload = { nama: nama, jumlah: jumlah, hadir: hadir, type: 'rsvp' };
+  if(!nama || !jumlah){
+    showStatus(rsvpStatus, 'Sila lengkapkan nama & jumlah.', false);
+    return;
+  }
 
-      postFormNoCORS(RSVP_WS_URL, payload, function(ok){
-        if(ok){ showStatus(rsvpStatus, 'RSVP dihantar. Terima kasih!', true); try{ rsvpForm.reset(); }catch(e){} setTimeout(()=>{ popupRsvpIframe.style.display='none'; }, 800); }
-        else { showStatus(rsvpStatus, 'Gagal hantar RSVP. Sila cuba semula.', false); }
-      });
-    });
+  // 🎉 TERUS bagi feedback — tak tunggu server
+  showStatus(rsvpStatus, 'RSVP dihantar. Terima kasih!', true);
+  rsvpForm.reset();
+
+  // popup tutup laju (300ms)
+  setTimeout(()=>{ popupRsvpIframe.style.display='none'; }, 300);
+
+  // server submit (jika gagal, update balik)
+  const payload = { nama, jumlah, hadir, type:'rsvp' };
+
+  postFormNoCORS(RSVP_WS_URL, payload, function(ok){
+    if(!ok){
+      showStatus(rsvpStatus, 'Server gagal sahkan RSVP. Cuba semula.', false);
+    }
+  });
+});
+
   }
 
   // ---------- Ucapan submit ----------
