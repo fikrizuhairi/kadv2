@@ -497,8 +497,8 @@
   showStatus(rsvpStatus, 'RSVP dihantar. Terima kasih!', true);
   rsvpForm.reset();
 
-  // popup tutup laju (300ms)
-  setTimeout(()=>{ popupRsvpIframe.style.display='none'; }, 300);
+  // popup tutup laju (600ms)
+  setTimeout(()=>{ popupRsvpIframe.style.display='none'; }, 600);
 
   // server submit (jika gagal, update balik)
   const payload = { nama, jumlah, hadir, type:'rsvp' };
