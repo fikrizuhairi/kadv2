@@ -111,6 +111,15 @@
     .bubbles::-webkit-scrollbar-thumb { background: #d1c3aa; border-radius: 3px; }
     .bubbles::-webkit-scrollbar-track { background: transparent; }
 
+    /* photo slider styles (mobile-friendly) */
+    .photo-slider{ width:100%; max-width:360px; margin:12px auto; overflow:hidden; border-radius:12px; }
+    .photo-slider .slides{ display:flex; transition:transform 400ms ease; will-change:transform; }
+    .photo-slider .slide-item{ min-width:100%; flex:0 0 100%; display:flex; align-items:center; justify-content:center; height:200px; }
+    .photo-slider .slide-item img{ width:100%; height:100%; object-fit:cover; border-radius:12px; display:block; }
+    .slider-dots{ display:flex; gap:6px; justify-content:center; margin-top:8px; }
+    .slider-dots button{ width:8px; height:8px; border-radius:50%; border:none; background:#ddd; padding:0; }
+    .slider-dots button.active{ background:var(--accent); }
+
     /* ============================
        MAWADDAH-STYLE OPENING OVERLAY
        (glass panels + seal)
@@ -215,10 +224,13 @@
         <p><strong>Jamuan:</strong> 11.00 AM – 4.00 PM<br><strong>Ketibaan Pengantin:</strong> 12.00 PM</p>
 
         <h2>Gambar</h2>
-        <div class="grid">
-          <img src="https://i.postimg.cc/3RRKKKHH/265f0c1f-9af7-4fb7-956d-50d064a0eba4.jpg" alt="1">
-          <img src="https://i.postimg.cc/KcP9ZtJy/A24C2718-C6BC-4653-B516-9741E7B213BF-1-105-c.jpg" alt="2">
-          <img src="https://i.postimg.cc/T1VPHTMh/8EC8700E-DA47-4FF0-9F84-2FCE47B1A986-1-105-c.jpg" alt="3">
+        <div class="photo-slider" aria-label="Galeri Gambar">
+          <div class="slides">
+            <div class="slide-item"><img src="https://i.postimg.cc/3RRKKKHH/265f0c1f-9af7-4fb7-956d-50d064a0eba4.jpg" alt="Foto 1"></div>
+            <div class="slide-item"><img src="https://i.postimg.cc/KcP9ZtJy/A24C2718-C6BC-4653-B516-9741E7B213BF-1-105-c.jpg" alt="Foto 2"></div>
+            <div class="slide-item"><img src="https://i.postimg.cc/T1VPHTMh/8EC8700E-DA47-4FF0-9F84-2FCE47B1A986-1-105-c.jpg" alt="Foto 3"></div>
+          </div>
+          <div class="slider-dots" aria-hidden="true"></div>
         </div>
 
         <div id="imageModal" class="modal" aria-hidden="true">
@@ -348,7 +360,7 @@
   function showStatus(el, msg, ok){ if(!el) return; el.style.display='block'; el.textContent = msg; el.style.color = ok ? '#0a7a00' : '#b21b1b'; }
 
   // ---------- Image modal ----------
-  const images = document.querySelectorAll('.grid img');
+  const images = document.querySelectorAll('.photo-slider img');
   const imageModal = document.getElementById('imageModal');
   const modalImg = document.getElementById('modalImg');
   const imageModalClose = document.getElementById('imageModalClose');
@@ -481,7 +493,7 @@
     setTimeout(()=>{
       if (called) return;
       called = true;
-      try{ iframe.removeEventListener('load', onLoad); }catch(e){}
+      try{ iframe.removeEventListener('load', onLoad);}catch(e){}
       if(callback) callback(false);
       try{ document.body.removeChild(form); }catch(e){}
     }, 4000);  // ← bukan lagi 8000ms
@@ -635,58 +647,103 @@
     window.forceEnter = kickoff;
   })();
 
+
   // --- YouTube autoplay (muted) + unmute on user gesture ---
-(function(){
-  // load YT iframe API
-  if(!document.getElementById('yt-iframe-api')){
-    const s = document.createElement('script');
-    s.id = 'yt-iframe-api';
-    s.src = "https://www.youtube.com/iframe_api";
-    document.head.appendChild(s);
-  }
+  (function(){
+    // load YT iframe API
+    if(!document.getElementById('yt-iframe-api')){
+      const s = document.createElement('script');
+      s.id = 'yt-iframe-api';
+      s.src = "https://www.youtube.com/iframe_api";
+      document.head.appendChild(s);
+    }
 
-  // player var (YT will call onYouTubeIframeAPIReady)
-  window.ytPlayer = null;
+    // player var (YT will call onYouTubeIframeAPIReady)
+    window.ytPlayer = null;
 
-  // This function is called by the YT API when ready
-  window.onYouTubeIframeAPIReady = function(){
-    try {
-      window.ytPlayer = new YT.Player('ytPlayer', {
-        height: '200',
-        width: '100%',
-        videoId: 'JmIUdR_fob0', // video ID
-        playerVars: {
-          autoplay: 1,      // start automatically (muted required by many browsers)
-          controls: 1,
-          rel: 0,
-          modestbranding: 1,
-          playsinline: 1,
-          mute: 1          // start muted so autoplay is allowed
-        },
-        events: {
-          onReady: function(e){
-            try { e.target.playVideo(); } catch(err){ console.warn('play error', err); }
+    // This function is called by the YT API when ready
+    window.onYouTubeIframeAPIReady = function(){
+      try {
+        window.ytPlayer = new YT.Player('ytPlayer', {
+          height: '200',
+          width: '100%',
+          videoId: 'JmIUdR_fob0', // video ID from your iframe URL
+          playerVars: {
+            autoplay: 1,      // start automatically (muted required by many browsers)
+            controls: 1,
+            rel: 0,
+            modestbranding: 1,
+            playsinline: 1,
+            mute: 1          // start muted so autoplay is allowed
+          },
+          events: {
+            onReady: function(e){
+              try { e.target.playVideo(); } catch(err){ console.warn('play error', err); }
+            }
           }
+        });
+      } catch(e){ console.warn('YT player error', e); }
+    };
+
+    // Try to unmute and play when user interacts (click / touch) — one-time only
+    function tryUnmute(){
+      try {
+        if(window.ytPlayer && typeof window.ytPlayer.unMute === 'function'){
+          window.ytPlayer.unMute();
+          window.ytPlayer.playVideo();
         }
-      });
-    } catch(e){ console.warn('YT player error', e); }
-  };
+      } catch(e){ console.warn('unmute failed', e); }
+      window.removeEventListener('click', tryUnmute);
+      window.removeEventListener('touchstart', tryUnmute);
+    }
+    window.addEventListener('click', tryUnmute, { once: true });
+    window.addEventListener('touchstart', tryUnmute, { once: true });
 
-  // Try to unmute and play when user interacts (click / touch) — one-time only
-  function tryUnmute(){
-    try {
-      if(window.ytPlayer && typeof window.ytPlayer.unMute === 'function'){
-        window.ytPlayer.unMute();
-        window.ytPlayer.playVideo();
+  })();
+
+
+  // ===== photo slider JS (auto + touch) =====
+  (function(){
+    try{
+      const container = document.querySelector('.photo-slider');
+      const slider = container && container.querySelector('.slides');
+      if(!slider) return;
+      const slides = slider.children;
+      const total = slides.length;
+      const dots = container.querySelector('.slider-dots');
+      let idx = 0;
+      let autoT;
+
+      // build dots
+      for(let i=0;i<total;i++){
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.addEventListener('click', ()=>{ go(i); });
+        dots.appendChild(b);
       }
-    } catch(e){ console.warn('unmute failed', e); }
-    window.removeEventListener('click', tryUnmute);
-    window.removeEventListener('touchstart', tryUnmute);
-  }
-  window.addEventListener('click', tryUnmute, { once: true });
-  window.addEventListener('touchstart', tryUnmute, { once: true });
 
-})();
+      function updateDots(){ Array.from(dots.children).forEach((b,i)=>b.classList.toggle('active', i===idx)); }
+      function go(i){ idx = (i + total) % total; slider.style.transform = 'translateX(-'+(idx*100)+'%)'; updateDots(); }
+
+      // auto play
+      function startAuto(){ autoT = setInterval(()=> go(idx+1), 3500); }
+      function stopAuto(){ clearInterval(autoT); }
+      startAuto();
+
+      // pause on hover
+      container.addEventListener('mouseenter', stopAuto);
+      container.addEventListener('mouseleave', startAuto);
+
+      // touch support (basic)
+      let startX = 0, curX = 0, dragging = false;
+      slider.addEventListener('touchstart', function(e){ startX = e.touches[0].clientX; dragging = true; stopAuto(); }, {passive:true});
+      slider.addEventListener('touchmove', function(e){ if(!dragging) return; curX = e.touches[0].clientX; const delta = (curX - startX) / container.clientWidth * 100; slider.style.transform = 'translateX(' + ( -idx*100 + delta ) + '%)'; }, {passive:true});
+      slider.addEventListener('touchend', function(){ dragging = false; const diff = curX - startX; if(diff > 50) go(idx-1); else if(diff < -50) go(idx+1); else go(idx); startAuto(); });
+
+      // make first dot active
+      updateDots();
+    }catch(e){ console.warn('slider init', e); }
+  })();
 
 
 })();
