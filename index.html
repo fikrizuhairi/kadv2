@@ -237,6 +237,13 @@
           <div><div class="num" id="secs">0</div><div class="lbl">Saat</div></div>
         </div>
 
+<!-- ====== Video player: autoplay (muted) placed under countdown ====== -->
+      <div id="videoContainer" style="margin-top:12px;text-align:center;">
+      <div id="ytPlayer" style="width:100%;max-width:420px;margin:auto;"></div>
+    </div>
+<!-- ================================================================== -->
+
+
         <footer>Terima kasih — Kami hargai kehadiran dan doa anda.</footer>
       </div>
     </section>
@@ -627,6 +634,59 @@
     // expose manual trigger
     window.forceEnter = kickoff;
   })();
+
+  // --- YouTube autoplay (muted) + unmute on user gesture ---
+(function(){
+  // load YT iframe API
+  if(!document.getElementById('yt-iframe-api')){
+    const s = document.createElement('script');
+    s.id = 'yt-iframe-api';
+    s.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(s);
+  }
+
+  // player var (YT will call onYouTubeIframeAPIReady)
+  window.ytPlayer = null;
+
+  // This function is called by the YT API when ready
+  window.onYouTubeIframeAPIReady = function(){
+    try {
+      window.ytPlayer = new YT.Player('ytPlayer', {
+        height: '200',
+        width: '100%',
+        videoId: 'JmIUdR_fob0', // video ID
+        playerVars: {
+          autoplay: 1,      // start automatically (muted required by many browsers)
+          controls: 1,
+          rel: 0,
+          modestbranding: 1,
+          playsinline: 1,
+          mute: 1          // start muted so autoplay is allowed
+        },
+        events: {
+          onReady: function(e){
+            try { e.target.playVideo(); } catch(err){ console.warn('play error', err); }
+          }
+        }
+      });
+    } catch(e){ console.warn('YT player error', e); }
+  };
+
+  // Try to unmute and play when user interacts (click / touch) — one-time only
+  function tryUnmute(){
+    try {
+      if(window.ytPlayer && typeof window.ytPlayer.unMute === 'function'){
+        window.ytPlayer.unMute();
+        window.ytPlayer.playVideo();
+      }
+    } catch(e){ console.warn('unmute failed', e); }
+    window.removeEventListener('click', tryUnmute);
+    window.removeEventListener('touchstart', tryUnmute);
+  }
+  window.addEventListener('click', tryUnmute, { once: true });
+  window.addEventListener('touchstart', tryUnmute, { once: true });
+
+})();
 
 
 })();
