@@ -7,7 +7,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    :root{--accent:#a67c52;--muted:#6b7280;--glass:rgba(255,255,255,0.75)}
+    :root{
+      --accent:#a67c52;
+      --muted:#6b7280;
+      --overlay-fade-ms:800ms;
+    }
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%}
     body{font-family:'Poppins',sans-serif;background:#fff;color:#111;-webkit-font-smoothing:antialiased;
@@ -16,170 +20,162 @@
     }
 
     /* ---------- FIXED BACKGROUND ---------- */
-    .bg-video {
-      position:fixed;
-      inset:0;
-      z-index:-3;
-      pointer-events:none;
-      overflow:hidden;
-    }
-    .bg-video img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-      display:block;
-      filter: saturate(0.98) contrast(1) brightness(0.96);
-      transform: scale(1.03);
-      will-change: transform;
-    }
+.bg-video {
+  position: fixed;
+  inset: 0;
+  z-index: -5;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff; /* fallback */
+  overflow: hidden;
+}
+
+.bg-video img {
+  max-width: 100%;
+  max-height: 100vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center center;
+  display: block;
+}
 
     /* ---------- MAIN APP (scrolls above fixed bg) ---------- */
-    .app{max-width:420px;margin:auto;position:relative;min-height:100vh;scroll-snap-type:y mandatory;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:140px;z-index:1}
-    section{scroll-snap-align:start;min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative}
-    .content{background:rgba(255,255,255,0.92);backdrop-filter:blur(6px);border-radius:16px;padding:24px;box-shadow:0 8px 20px rgba(0,0,0,0.05);position:relative;z-index:2;margin:20px;max-width:420px}
+    .app{ max-width:420px; margin:auto; position:relative; min-height:100vh; scroll-snap-type:y mandatory; overflow-y:auto; -webkit-overflow-scrolling:touch; padding-bottom:140px; z-index:1; }
+    section{ scroll-snap-align:start; min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; }
+    .content{ background:rgba(255,255,255,0.92); backdrop-filter:blur(6px); border-radius:16px; padding:24px; box-shadow:0 8px 20px rgba(0,0,0,0.05); position:relative; z-index:2; margin:20px; max-width:420px; }
 
-    .intro-text{position:relative;text-align:center;color:#cc5500;z-index:2;text-shadow:2px 2px 4px rgba(0,0,0,0.25);padding-top:80px;padding-bottom:40px}
-    .intro-text .kecil{font-family:'Playfair Display',serif;font-size:14px;color:#000;margin-bottom:6px;font-weight:400}
-    .intro-text .besar{font-family:'Playfair Display',serif;font-size:40px;font-weight:700;letter-spacing:1px;line-height:1.2}
-    .intro-text .tarikh{font-family:'Poppins',sans-serif;font-size:16px;color:#222;margin-top:10px;font-weight:500}
-    .intro-text .lokasi{font-family:'Poppins',sans-serif;font-size:14px;color:#222;margin-top:3px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .intro-text{ position:relative; text-align:center; color:#cc5500; z-index:2; text-shadow:2px 2px 4px rgba(0,0,0,0.25); padding-top:80px; padding-bottom:40px; }
+    .intro-text .kecil{ font-family:'Playfair Display',serif; font-size:14px; color:#000; margin-bottom:6px; font-weight:400 }
+    .intro-text .besar{ font-family:'Playfair Display',serif; font-size:40px; font-weight:700; letter-spacing:1px; line-height:1.2 }
+    .intro-text .tarikh{ font-family:'Poppins',sans-serif; font-size:16px; color:#222; margin-top:10px; font-weight:500 }
+    .intro-text .lokasi{ font-family:'Poppins',sans-serif; font-size:14px; color:#222; margin-top:3px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
 
-    .parent-name,.couple-name{font-family:'Playfair Display',serif;font-size:18px;color:#2b2b2b;margin-bottom:8px;text-align:center;font-weight:700}
-    h2{font-size:18px;font-weight:600;color:var(--accent);margin:16px 0 8px;text-align:center}
-    p{font-size:15px;color:#222;line-height:1.6;margin-bottom:8px;text-align:center}
+    .parent-name,.couple-name{ font-family:'Playfair Display',serif; font-size:18px; color:#2b2b2b; margin-bottom:8px; text-align:center; font-weight:700 }
+    h2{ font-size:18px; font-weight:600; color:var(--accent); margin:16px 0 8px; text-align:center }
+    p{ font-size:15px; color:#222; line-height:1.6; margin-bottom:8px; text-align:center }
 
-    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}
-    .grid img{width:100%;height:90px;object-fit:cover;border-radius:8px;cursor:pointer;transition:0.3s}
-    .grid img:hover{opacity:0.95;transform:scale(1.02)}
+    .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:10px }
+    .grid img{ width:100%; height:90px; object-fit:cover; border-radius:8px; cursor:pointer; transition:0.3s }
+    .grid img:hover{ opacity:0.95; transform:scale(1.02) }
 
-    .modal{display:none;position:fixed;z-index:9999;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:rgba(0,0,0,0.8)}
-    .modal-content{margin:auto;display:block;max-width:90%;max-height:90%;border-radius:10px}
-    .close{position:absolute;top:15px;right:25px;color:white;font-size:30px;font-weight:bold;cursor:pointer}
+    .modal{ display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; overflow:auto; background-color:rgba(0,0,0,0.8) }
+    .modal-content{ margin:auto; display:block; max-width:90%; max-height:90%; border-radius:10px }
+    .close{ position:absolute; top:15px; right:25px; color:white; font-size:30px; font-weight:bold; cursor:pointer }
 
-    .countdown{display:flex;justify-content:center;gap:8px;margin-top:12px}
-    .countdown div{background:#f1f1f1;padding:8px 10px;border-radius:8px;min-width:54px}
-    .countdown .num{font-weight:700;font-size:16px}
-    .countdown .lbl{font-size:11px;color:var(--muted)}
+    .countdown{ display:flex; justify-content:center; gap:8px; margin-top:12px }
+    .countdown div{ background:#f1f1f1; padding:8px 10px; border-radius:8px; min-width:54px }
+    .countdown .num{ font-weight:700; font-size:16px }
+    .countdown .lbl{ font-size:11px; color:var(--muted) }
 
-    footer{font-size:12px;color:var(--muted);margin-top:20px;text-align:center}
+    footer{ font-size:12px; color:var(--muted); margin-top:20px; text-align:center }
 
     /* bottom bar */
-    .bottom-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;z-index:99999;width:calc(100% - 40px);max-width:420px;background:rgba(0,0,0,0.75);border-radius:14px;padding:10px 12px;box-shadow:0 6px 20px rgba(0,0,0,0.12);display:flex;gap:12px;align-items:center;justify-content:space-around;overflow:visible;padding-bottom:calc(10px + env(safe-area-inset-bottom));}
-    .bottom-bar .icon-btn{display:flex;flex-direction:column;align-items:center;justify-content:center;background:transparent;color:#fff;font-size:20px;text-decoration:none;gap:4px;cursor:pointer}
-    .bottom-bar .icon-btn i{color:#fff;font-size:20px}
-    .bottom-bar .icon-btn span{font-size:11px;color:#fff;line-height:1}
+    .bottom-bar{ position:fixed; left:50%; transform:translateX(-50%); bottom:10px; z-index:10050; width:calc(100% - 40px); max-width:420px; background:rgba(0,0,0,0.75); border-radius:14px; padding:10px 12px; box-shadow:0 6px 20px rgba(0,0,0,0.12); display:flex; gap:12px; align-items:center; justify-content:space-around; overflow:visible; padding-bottom:calc(10px + env(safe-area-inset-bottom)); }
+    .bottom-bar .icon-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; background:transparent; color:#fff; font-size:20px; text-decoration:none; gap:4px; cursor:pointer }
+    .bottom-bar .icon-btn i{ color:#fff; font-size:20px }
+    .bottom-bar .icon-btn span{ font-size:11px; color:#fff; line-height:1 }
 
-    .contact-card{display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:110px;z-index:10001;width:calc(100% - 40px);max-width:420px;background:#e8dcc6;border-radius:18px;padding:22px;box-shadow:0 10px 30px rgba(0,0,0,0.12)}
-    .contact-card h3{text-align:center;margin-bottom:8px;font-family:'Playfair Display',serif;font-size:20px;color:#1f1f1f}
-    .contact-list{margin-top:8px}
-    .contact-row{display:flex;align-items:center;justify-content:space-between;padding:12px 6px;border-radius:10px}
-    .contact-info{display:flex;flex-direction:column}
-    .contact-info .name{font-size:16px;font-weight:600;color:#111}
-    .contact-info .role{font-size:13px;font-style:italic;color:#6b5f50}
-    .contact-actions{display:flex;gap:12px;align-items:center}
-    .contact-actions a{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:8px;background:var(--accent);border:none;text-decoration:none;color:#fff}
+    .contact-card{ display:none; position:fixed; left:50%; transform:translateX(-50%); bottom:110px; z-index:10051; width:calc(100% - 40px); max-width:420px; background:#e8dcc6; border-radius:18px; padding:22px; box-shadow:0 10px 30px rgba(0,0,0,0.12) }
+    .contact-card h3{ text-align:center; margin-bottom:8px; font-family:'Playfair Display',serif; font-size:20px; color:#1f1f1f }
+    .contact-list{ margin-top:8px }
+    .contact-row{ display:flex; align-items:center; justify-content:space-between; padding:12px 6px; border-radius:10px }
+    .contact-info{ display:flex; flex-direction:column }
+    .contact-info .name{ font-size:16px; font-weight:600; color:#111 }
+    .contact-info .role{ font-size:13px; font-style:italic; color:#6b5f50 }
+    .contact-actions{ display:flex; gap:12px; align-items:center }
+    .contact-actions a{ display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:8px; background:var(--accent); border:none; text-decoration:none; color:#fff }
 
-    @media (max-width:420px){.contact-card{width:calc(100% - 28px);padding:16px}}
+    @media (max-width:420px){ .contact-card{ width:calc(100% - 28px); padding:16px } }
 
-    .bubbles{display:flex;flex-direction:column;gap:8px;margin:12px 0;max-height:300px;overflow-y:auto;padding-right:4px;scroll-behavior:smooth}
-    .bubble{align-self:flex-start;background:#fff4e9;border:1px solid #f0e1cf;padding:10px 14px;border-radius:18px;max-width:90%;box-shadow:0 6px 12px rgba(0,0,0,0.06);}
-    .bubble .meta{font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600}
-    .bubble .msg{font-size:14px;color:#222;line-height:1.4}
+    .bubbles{ display:flex; flex-direction:column; gap:8px; margin:12px 0; max-height:300px; overflow-y:auto; padding-right:4px; scroll-behavior:smooth }
+    .bubble{ align-self:flex-start; background:#fff4e9; border:1px solid #f0e1cf; padding:10px 14px; border-radius:18px; max-width:90%; box-shadow:0 6px 12px rgba(0,0,0,0.06); }
+    .bubble .meta{ font-size:12px; color:var(--muted); margin-bottom:6px; font-weight:600 }
+    .bubble .msg{ font-size:14px; color:#222; line-height:1.4 }
 
-    .map-popup iframe{width:100%;height:60vh;max-height:760px;border:none;border-radius:10px;margin-top:8px}
-    @media (max-width:420px){.map-popup iframe{height:65vh;max-height:820px}}
+    .map-popup iframe{ width:100%; height:60vh; max-height:760px; border:none; border-radius:10px; margin-top:8px }
+    @media (max-width:420px){ .map-popup iframe{ height:65vh; max-height:820px } }
+    .map-popup{ display:none; position:fixed; z-index:10052 }
 
-    .map-popup{display:none;position:fixed;z-index:10000}
-
-    /* Optional: gaya scrollbar lembut */
     .bubbles::-webkit-scrollbar { width: 6px; }
     .bubbles::-webkit-scrollbar-thumb { background: #d1c3aa; border-radius: 3px; }
     .bubbles::-webkit-scrollbar-track { background: transparent; }
 
-    /* ---------- ENTRY OVERLAY + DOOR ANIMATION ---------- */
-    #entryOverlay {
-      position:fixed;
-      inset:0;
-      z-index:100000;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.55));
-      -webkit-backdrop-filter: blur(2px);
+    /* ============================
+       MAWADDAH-STYLE OPENING OVERLAY
+       (glass panels + seal)
+       ============================ */
+    :root { --door-ms: 2500ms; } /* mirrors DOOR_ANIM_MS in JS, adjust if needed */
+    #openingOverlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10060; /* topmost while visible */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.55));
+      -webkit-backdrop-filter: blur(4px);
+      backdrop-filter: blur(4px);
+      transition: opacity var(--overlay-fade-ms) ease;
+      pointer-events: auto;
     }
-    #entryOverlay .center {
-      text-align:center;
-      color:#fff;
-      padding:18px;
-      max-width:92%;
-    }
-    #entryOverlay h1{font-family:'Playfair Display',serif;font-size:28px;margin-bottom:6px}
-    #entryOverlay p{opacity:0.95;margin-bottom:14px}
-    #enterBtn {
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      background:var(--accent);
-      color:#fff;
-      padding:12px 18px;
-      border-radius:10px;
-      font-weight:700;
-      cursor:pointer;
-      border:none;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-      transform: translateY(0);
-      transition: transform 200ms ease;
-    }
-    #enterBtn:active{ transform: translateY(2px); }
+    #openingOverlay.fade-out { opacity:0; pointer-events:none; }
 
-    .door {
-      position:fixed;
-      top:0;
-      height:100vh;
-      width:50vw;
-      z-index:100001;
-      background: linear-gradient(180deg, rgba(10,8,6,0.98), rgba(30,24,20,0.95));
-      box-shadow: inset 0 0 80px rgba(0,0,0,0.25);
-      transform-origin: left center;
-      transition: transform 4500ms cubic-bezier(.22,.9,.2,1), opacity 600ms ease;
+    .glass-panel {
+      position: absolute;
+      top: 0;
+      height: 100vh;
+      width: 50vw;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      backdrop-filter: blur(8px) saturate(1.05);
+      transition: transform 2500ms cubic-bezier(.22,.9,.2,1), opacity 600ms ease;
       will-change: transform;
+      z-index:10061;
     }
-    .door.right { right:0; left:auto; transform-origin: right center; }
-    .door.left { left:0; }
+    .glass-left  { left: 0; transform: translateX(0); }
+    .glass-right { right: 0; transform: translateX(0); }
 
-    .door .panel-deco { position:absolute; inset:0; background-image: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02)); pointer-events:none; }
+    /* when body has opening-opened class, slide panels away */
+    body.opening-opened .glass-left  { transform: translateX(-110%); opacity:0.98; }
+    body.opening-opened .glass-right { transform: translateX(110%);  opacity:0.98; }
 
-    body:not(.entered) .door.left { transform: translateX(0) rotateY(0deg); }
-    body:not(.entered) .door.right { transform: translateX(0) rotateY(0deg); }
+    .opening-seal {
+      width: 140px;
+      height: 140px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Playfair Display", serif;
+      font-size: 34px;
+      color: #3c4928;
+      z-index: 10070;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.28);
+      transition: transform 1000ms ease, opacity 1000ms ease;
+    }
+    body.opening-opened .opening-seal { transform: scale(0.6); opacity:0; }
 
-    body.entered .door.left { transform: translateX(-110vw) rotateY(-8deg); opacity:0.98; }
-    body.entered .door.right { transform: translateX(110vw) rotateY(8deg); opacity:0.98; }
-
-    #entryOverlay.hidden { opacity:0; transition: opacity 400ms ease 400ms; pointer-events:none; }
-
+    /* fallback rules for small screens */
     @media (max-width:420px){
-      .intro-text .besar{font-size:32px}
-      #entryOverlay h1{font-size:22px}
+      .opening-seal { width:110px; height:110px; font-size:26px; }
+      .glass-panel { width:52vw; }
     }
   </style>
 </head>
 <body>
   <!-- Fixed background -->
   <div class="bg-video" aria-hidden="true">
-    <img src="https://jemputan.me/images/upload/design/1723691062_FLO102_Cover.png" alt="Wedding Background" />
+    <img src="https://invitation-v2.mymawaddah.com/storage/wedapp-invitation/design/cv0005/6IHY0i1731112033501CV0005-RSVP.png" alt="Wedding Background" />
   </div>
 
-  <!-- Door panels -->
-  <div class="door left" aria-hidden="true"><div class="panel-deco"></div></div>
-  <div class="door right" aria-hidden="true"><div class="panel-deco"></div></div>
-
-  <!-- Entry overlay -->
-  <div id="entryOverlay" role="dialog" aria-label="Skrin Muka" aria-modal="true">
-    <div class="center">
-      <h1>Jemputan Isma & Fikri</h1>
-      <p>Selamat datang — laman ini akan dibuka seketika.</p>
-      <button id="enterBtn" aria-label="Masuk ke laman">Tekan untuk Masuk</button>
-    </div>
+  <!-- NEW: Mawaddah-style opening overlay -->
+  <div id="openingOverlay" role="dialog" aria-label="Skrin Muka" aria-modal="true">
+    <div class="glass-panel glass-left" aria-hidden="true"></div>
+    <div class="glass-panel glass-right" aria-hidden="true"></div>
+    <div class="opening-seal" id="openingSeal" aria-hidden="true">I|F</div>
   </div>
 
   <!-- MAIN SCROLLING CONTENT -->
@@ -322,9 +318,15 @@
   const RSVP_WS_URL = 'https://script.google.com/macros/s/AKfycbzDYI9RXDgtm0E6Li32k8tpsgzYn9WKA3JATB5UUdNbd2cxXLLUM6ARSliRikx-Cx4d/exec';
   const UCAPAN_WS_URL = 'https://script.google.com/macros/s/AKfycbzDYI9RXDgtm0E6Li32k8tpsgzYn9WKA3JATB5UUdNbd2cxXLLUM6ARSliRikx-Cx4d/exec';
 
-  // Auto-enter settings
-  const AUTO_ENTER = true;           // true = auto buka tanpa tekan button
-  const AUTO_ENTER_DELAY_MS = 500;   // delay sebelum buka (ms). 0 = segera
+  // Auto-enter + timing settings (ubah ikut citarasa)
+  const AUTO_ENTER = true;           // auto buka tanpa tekan button
+  const OVERLAY_SHOW_MS = 700;      // overlay text stays front (ms)
+  const AUTO_ENTER_DELAY_MS = 0;     // extra delay before starting door animation (after overlay show)
+  const DOOR_ANIM_MS = 100;         // kept from original — used by flow (ms)
+  const OVERLAY_FADE_MS = 800;       // overlay fade duration (ms)
+
+  // expose overlay-fade duration to CSS variable so transition uses this value
+  document.documentElement.style.setProperty('--overlay-fade-ms', OVERLAY_FADE_MS + 'ms');
 
   // ---------- helpers ----------
   function escapeHtml(s){ if (typeof s !== 'string') return s||''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
@@ -374,10 +376,10 @@
 
   // close popup buttons
   const closeRsvpIframe = document.getElementById('closeRsvpIframe');
-  if(closeRsvpIframe) closeRsvpIframe.addEventListener('click', function(e){ e.stopPropagation(); popupRsvpIframe.style.display='none'; });
+  if(closeRsvpIframe) closeRsvpIframe.addEventListener('click', function(e){ e.stopPropagation(); popupRsvpIframe.style.display = 'none'; });
 
   const closeUcapanBtn = document.getElementById('closeUcapanBtn');
-  if(closeUcapanBtn) closeUcapanBtn.addEventListener('click', function(e){ e.stopPropagation(); ucapanForm.style.display='none'; });
+  if(closeUcapanBtn) closeUcapanBtn.addEventListener('click', function(e){ e.stopPropagation(); ucapanForm.style.display = 'none'; });
 
   // ---------- JSONP loader for ucapan list ----------
   const bubblesContainer = document.getElementById('bubblesContainer');
@@ -401,7 +403,6 @@
   function renderUcapanList(items){
     try {
       bubblesContainer.innerHTML = '';
-      // Ensure newest-first. Heuristic: if server returns oldest-first, reverse it.
       let arr = Array.from(items || []);
       try {
         if(arr.length >= 2){
@@ -421,7 +422,6 @@
         bubblesContainer.appendChild(bubble);
       });
 
-      // after render, scroll to top to show newest (we insert newest at top)
       setTimeout(()=>{ try{ bubblesContainer.scrollTo({ top: 0, behavior:'smooth' }); }catch(e){} }, 60);
     } catch(e){ console.warn('renderUcapanList error', e); }
   }
@@ -547,76 +547,52 @@
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
-  // ---------- ENTRY / DOOR / AUTO-ENTER ----------
-  const body = document.body;
-  const overlay = document.getElementById('entryOverlay');
-  const enterBtn = document.getElementById('enterBtn');
-  const leftDoor = document.querySelector('.door.left');
-  const rightDoor = document.querySelector('.door.right');
-  const app = document.getElementById('appRoot');
+    // ---------- NEW: OPENING OVERLAY FLOW (robust) ----------
+  (function openingFlow(){
+    const openingOverlay = document.getElementById('openingOverlay');
+    const app = document.getElementById('appRoot');
 
-  function disableScroll() {
-    // lock scroll while overlay shown
-    body.style.overflow = 'hidden';
-    app.setAttribute('aria-hidden','true');
-  }
-  function enableScroll() {
-    body.style.overflow = '';
-    app.setAttribute('aria-hidden','false');
-  }
-  // initial lock
-  disableScroll();
+    // lock scroll while overlay visible
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+    if (app) app.setAttribute('aria-hidden','true');
 
-  function enterAnimation() {
-    if (body.classList.contains('entered')) return;
-    body.classList.add('entered');
-    const ANIM_MS = 1000;
-    setTimeout(()=> {
-      if (overlay) {
-        overlay.classList.add('hidden');
-        overlay.style.pointerEvents = 'none';
+    function kickoff(){
+      // add class to trigger CSS slide-away
+      document.body.classList.add('opening-opened');
+
+      // Immediately allow pointer events through and enable scrolling
+      // so user can interact while panels animate away.
+      if (openingOverlay) {
+        openingOverlay.style.pointerEvents = 'none';
+        openingOverlay.classList.add('fade-out'); // start fade-out visually
       }
-      if (leftDoor) leftDoor.style.display = 'none';
-      if (rightDoor) rightDoor.style.display = 'none';
-      enableScroll();
-    }, ANIM_MS);
-  }
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      if (app) app.setAttribute('aria-hidden','false');
 
-  // click fallback
-  if (enterBtn) {
-    enterBtn.addEventListener('click', function(e){ enterAnimation(); });
-    enterBtn.addEventListener('keyup', function(e){ if(e.key === 'Enter' || e.key === ' ') enterAnimation(); });
-  }
+      // schedule removal after fade time (safe fallback if transitionend not fired)
+      const safeRemoveDelay = Math.max(DOOR_ANIM_MS, OVERLAY_FADE_MS) + 120;
+      setTimeout(()=>{
+        try{ openingOverlay && openingOverlay.remove(); }catch(e){}
+      }, safeRemoveDelay);
+    }
 
-  // reduced motion preference: skip animation
-  const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-  if (mq && mq.matches) {
-    body.classList.add('entered');
-    if (overlay) overlay.style.display = 'none';
-    if (leftDoor) leftDoor.style.display = 'none';
-    if (rightDoor) rightDoor.style.display = 'none';
-    enableScroll();
-  } else {
-    // AUTO-ENTER logic
     if (AUTO_ENTER) {
-      function tryAutoEnter(){
-        if (!overlay) return;
-        setTimeout(()=> { enterAnimation(); }, Math.max(0, AUTO_ENTER_DELAY_MS || 0));
-      }
       if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        setTimeout(tryAutoEnter, 60);
+        setTimeout(kickoff, OVERLAY_SHOW_MS + AUTO_ENTER_DELAY_MS);
       } else {
-        window.addEventListener('load', tryAutoEnter, { once: true });
-        document.addEventListener('DOMContentLoaded', function(){ setTimeout(tryAutoEnter, 60); }, { once: true });
+        window.addEventListener('load', ()=> setTimeout(kickoff, OVERLAY_SHOW_MS + AUTO_ENTER_DELAY_MS), { once:true });
+        document.addEventListener('DOMContentLoaded', ()=> setTimeout(kickoff, OVERLAY_SHOW_MS + AUTO_ENTER_DELAY_MS), { once:true });
       }
     } else {
-      overlay.addEventListener('touchmove', function(e){ e.preventDefault(); }, { passive:false });
-      if (overlay) overlay.addEventListener('click', function(ev){ if(ev.target === overlay) enterAnimation(); });
+      if(openingOverlay) openingOverlay.addEventListener('click', kickoff, { once:true });
     }
-  }
 
-  // expose manual trigger
-  window.forceEnter = enterAnimation;
+    // expose manual trigger
+    window.forceEnter = kickoff;
+  })();
+
 
 })();
 </script>
