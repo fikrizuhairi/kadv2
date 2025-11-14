@@ -75,12 +75,13 @@
     footer{ font-size:12px; color:var(--muted); margin-top:20px; text-align:center }
 
     /* bottom bar */
-    .bottom-bar{ position:fixed; left:50%; transform:translateX(-50%); bottom:10px; z-index:10050; width:calc(100% - 40px); max-width:420px; background:rgba(0,0,0,0.75); border-radius:14px; padding:10px 12px; box-shadow:0 6px 20px rgba(0,0,0,0.12); display:flex; gap:12px; align-items:center; justify-content:space-around; overflow:visible; padding-bottom:calc(10px + env(safe-area-inset-bottom)); }
-    .bottom-bar .icon-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; background:transparent; color:#fff; font-size:20px; text-decoration:none; gap:4px; cursor:pointer }
-    .bottom-bar .icon-btn i{ color:#fff; font-size:20px }
+    .bottom-bar{ position:fixed; left:50%; transform:translateX(-50%); bottom:10px; z-index:10050; width:calc(100% - 40px); max-width:420px; background:rgba(0,0,0,0.75); border-radius:14px; padding:8px 12px; box-shadow:0 6px 20px rgba(0,0,0,0.12); display:flex; gap:12px; align-items:center; justify-content:space-around; overflow:visible; padding-bottom:calc(10px + env(safe-area-inset-bottom)); }
+    .bottom-bar .icon-btn{ display:flex; flex-direction:column; align-items:center; justify-content:center; background:transparent; color:#fff; font-size:18px; text-decoration:none; gap:4px; cursor:pointer; overflow:visible; }
+    .bottom-bar .icon-btn i{ color:#fff; font-size:18px }
     .bottom-bar .icon-btn span{ font-size:11px; color:#fff; line-height:1 }
 
-    .contact-card{ display:none; position:fixed; left:50%; transform:translateX(-50%); bottom:110px; z-index:10051; width:calc(100% - 40px); max-width:420px; background:#e8dcc6; border-radius:18px; padding:22px; box-shadow:0 10px 30px rgba(0,0,0,0.12) }
+    /* ensure contact-card sits above bottom-bar */
+    .contact-card{ display:none; position:fixed; left:50%; transform:translateX(-50%); bottom:80px; z-index:10070; width:calc(100% - 40px); max-width:320px; background:#e8dcc6; border-radius:18px; padding:22px; box-shadow:0 10px 30px rgba(0,0,0,0.12) }
     .contact-card h3{ text-align:center; margin-bottom:8px; font-family:'Playfair Display',serif; font-size:20px; color:#1f1f1f }
     .contact-list{ margin-top:8px }
     .contact-row{ display:flex; align-items:center; justify-content:space-between; padding:12px 6px; border-radius:10px }
@@ -99,7 +100,7 @@
 
     .map-popup iframe{ width:100%; height:60vh; max-height:760px; border:none; border-radius:10px; margin-top:8px }
     @media (max-width:420px){ .map-popup iframe{ height:65vh; max-height:820px } }
-    .map-popup{ display:none; position:fixed; z-index:10052 }
+    .map-popup{ display:none; position:fixed; z-index:10065 }
 
     .bubbles::-webkit-scrollbar { width: 6px; }
     .bubbles::-webkit-scrollbar-thumb { background: #d1c3aa; border-radius: 3px; }
@@ -127,7 +128,6 @@
 
     /* ============================
        MAWADDAH-STYLE OPENING OVERLAY
-       (glass panels + seal)
        ============================ */
     :root { --door-ms: 2500ms; } /* mirrors DOOR_ANIM_MS in JS, adjust if needed */
     #openingOverlay {
@@ -185,6 +185,29 @@
       .opening-seal { width:110px; height:110px; font-size:26px; }
       .glass-panel { width:52vw; }
     }
+
+    /* ===== Compact popup styles (RSVP / Ucapan) ===== */
+    .map-popup.compact {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 90px;
+      background: #e8dcc6;
+      color: #222;
+      padding: 12px;
+      border-radius: 12px;
+      width: calc(100% - 40px);
+      max-width: 320px;   /* <-- adjust here to make popups smaller/larger */
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      z-index: 10080;
+    }
+
+    @media (max-width: 360px){
+      .map-popup.compact { max-width: 300px; padding:10px; bottom:100px; }
+      .bottom-bar { padding:6px 10px; }
+    }
+
   </style>
 </head>
 <body>
@@ -232,9 +255,9 @@
         <div class="photo-slider" aria-label="Galeri Gambar">
           <button class="slider-btn prev" aria-label="Sebelum">‹</button>
           <div class="slides">
-            <div class="slide-item"><img src="https://i.postimg.cc/C5BpCwGw/Whats-App-Image-2025-11-08-at-7-40-37-PM.jpg" alt="Foto 1"></div>
-            <div class="slide-item"><img src="https://i.postimg.cc/RVtzNVCT/Whats-App-Image-2025-11-08-at-7-42-44-PM.jpg" alt="Foto 2"></div>
-           <!-- <div class="slide-item"><img src="https://i.postimg.cc/T1VPHTMh/8EC8700E-DA47-4FF0-9F84-2FCE47B1A986-1-105-c.jpg" alt="Foto 3"></div> -->
+            <div class="slide-item"><img src="https://i.postimg.cc/C5BpCwGw/Whats-App-Image-2025-11-08-at-7-40-37-PM.jpg" alt="Foto 1" loading="lazy" decoding="async"></div>
+            <div class="slide-item"><img src="https://i.postimg.cc/RVtzNVCT/Whats-App-Image-2025-11-08-at-7-42-44-PM.jpg" alt="Foto 2" loading="lazy" decoding="async"></div>
+           <!-- <div class="slide-item"><img src="https://i.postimg.cc/T1VPHTMh/8EC8700E-DA47-4FF0-9F84-2FCE47B1A986-1-105-c.jpg" alt="Foto 3" loading="lazy" decoding="async"></div> -->
           </div>
           <button class="slider-btn next" aria-label="Seterusnya">›</button>
           <div class="slider-dots" aria-hidden="true"></div>
@@ -258,7 +281,7 @@
 
         <!-- ====== Video player: autoplay (muted) placed under countdown ====== -->
         <div id="videoContainer" style="margin-top:12px;text-align:center;">
-          <div id="ytPlayer" style="width:100%;max-width:420px;margin:auto;"></div>
+          <div id="ytPlayer" style="width:100%;max-width:420px;margin:auto;height:200px;"></div>
         </div>
         <!-- ================================================================== -->
 
@@ -273,15 +296,15 @@
     <div class="contact-list">
       <div class="contact-row">
         <div class="contact-info"><div class="name">Hj. Shuhaimi</div><div class="role">Bapa</div></div>
-        <div class="contact-actions"><a href="https://wa.me/+60199150821" target="_blank" aria-label="whatsapp"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+60199150821" aria-label="call"><i class="fa-solid fa-phone"></i></a></div>
+        <div class="contact-actions"><a href="https://wa.me/+60199150821" target="_blank" rel="noopener noreferrer" aria-label="whatsapp"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+60199150821" aria-label="call"><i class="fa-solid fa-phone"></i></a></div>
       </div>
       <div class="contact-row">
         <div class="contact-info"><div class="name">Syafiq</div><div class="role">Abang</div></div>
-        <div class="contact-actions"><a href="https://wa.me/+60104070205" target="_blank" aria-label="whatsapp"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+60104070205" aria-label="call"><i class="fa-solid fa-phone"></i></a></div>
+        <div class="contact-actions"><a href="https://wa.me/+60104070205" target="_blank" rel="noopener noreferrer" aria-label="whatsapp"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+60104070205" aria-label="call"><i class="fa-solid fa-phone"></i></a></div>
       </div>
       <div class="contact-row">
         <div class="contact-info"><div class="name">Amalina</div><div class="role">Kakak</div></div>
-        <div class="contact-actions"><a href="https://wa.me/+601137426966" target="_blank" aria-label="whatsapp"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+601137426966" aria-label="call"><i class="fa-solid fa-phone"></i></a></div>
+        <div class="contact-actions"><a href="https://wa.me/+601137426966" target="_blank" rel="noopener noreferrer" aria-label="whatsapp"><i class="fa-brands fa-whatsapp"></i></a><a href="tel:+601137426966" aria-label="call"><i class="fa-solid fa-phone"></i></a></div>
       </div>
     </div>
   </div>
@@ -292,11 +315,11 @@
 
     <div class="icon-btn" id="mapBtn">
       <i class="fa-solid fa-location-dot"></i><span>Lokasi</span>
-      <div class="map-popup" id="mapPopup" style="display:none;position:absolute;bottom:70px;left:50%;transform:translateX(-50%);background:#e8dcc6;color:#222;padding:12px;border-radius:12px;width:260px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.12);">
+      <div class="map-popup" id="mapPopup" style="display:none;position:absolute;bottom:70px;left:50%;transform:translateX(-50%);background:#e8dcc6;color:#222;padding:12px;border-radius:12px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.12);">
         <h4 style="margin:0 0 6px;font-family:'Playfair Display',serif;color:#1f1f1f">Lokasi</h4>
         <p style="margin:0 0 10px;font-size:14px;color:#6b5f50">White House Event Space, Dungun</p>
-        <a href="https://maps.app.goo.gl/Z2F3c86dVen1ciR29" target="_blank" style="display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;text-decoration:none;padding:8px;border-radius:8px;margin:6px auto;max-width:200px;gap:8px"><i class="fa-solid fa-map-location-dot"></i><span>Google Maps</span></a>
-        <a href="https://ul.waze.com/ul?venue_id=67764271.677839321.39155974" target="_blank" style="display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;text-decoration:none;padding:8px;border-radius:8px;margin:6px auto;max-width:200px;gap:8px"><i class="fa-brands fa-waze"></i><span>Waze</span></a>
+        <a href="https://maps.app.goo.gl/Z2F3c86dVen1ciR29" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;text-decoration:none;padding:8px;border-radius:8px;margin:6px auto;max-width:200px;gap:8px"><i class="fa-solid fa-map-location-dot"></i><span>Google Maps</span></a>
+        <a href="https://ul.waze.com/ul?venue_id=67764271.677839321.39155974" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;text-decoration:none;padding:8px;border-radius:8px;margin:6px auto;max-width:200px;gap:8px"><i class="fa-brands fa-waze"></i><span>Waze</span></a>
       </div>
     </div>
 
@@ -304,7 +327,7 @@
   </div>
 
   <!-- popup small for RSVP choices -->
-  <div id="popupRsvp" class="map-popup" style="display:none;position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#e8dcc6;color:#222;padding:12px;border-radius:12px;width:260px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.12);">
+  <div id="popupRsvp" class="map-popup compact" style="display:none;">
     <h4 style="margin:0 0 6px;font-family:'Playfair Display',serif;color:#1f1f1f">RSVP</h4>
     <p style="margin:0 0 10px;font-size:14px;color:#6b5f50">Pilih tindakan untuk RSVP atau hantarkan ucapan.</p>
     <a id="openExternalRsvp" href="#" style="display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;text-decoration:none;padding:8px;border-radius:8px;margin:6px auto;max-width:200px;gap:8px"><i class="fa-solid fa-clipboard-list"></i><span>Isi RSVP</span></a>
@@ -312,7 +335,7 @@
   </div>
 
   <!-- popup iframe RSVP (uses form POST via hidden iframe to avoid CORS preflight) -->
-  <div id="popupRsvpIframe" class="map-popup" style="display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#e8dcc6;color:#222;padding:12px;border-radius:12px;width:95%;max-width:420px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.12);z-index:10000;">
+  <div id="popupRsvpIframe" class="map-popup compact" style="display:none;">
     <h4 style="margin:0 0 6px;font-family:'Playfair Display',serif;color:#1f1f1f">Isi RSVP</h4>
     <p style="margin:0 0 10px;font-size:14px;color:#6b5f50">Sila lengkapkan borang di bawah.</p>
     <button id="closeRsvpIframe" aria-label="Tutup" style="position:absolute;top:10px;right:12px;background:transparent;border:none;font-size:20px;color:#333;cursor:pointer;z-index:10001">&times;</button>
@@ -332,7 +355,7 @@
   </div>
 
   <!-- ucapan form -->
-  <div id="ucapanForm" class="map-popup" aria-label="ucapan" style="display:none;position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#e8dcc6;color:#222;padding:12px;border-radius:12px;width:95%;max-width:420px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.12);z-index:10000;">
+  <div id="ucapanForm" class="map-popup compact" aria-label="ucapan" style="display:none;">
     <h4 style="margin:0 0 6px;font-family:'Playfair Display',serif;color:#1f1f1f">Hantar Ucapan</h4>
     <p style="margin:0 0 10px;font-size:14px;color:#6b5f50">Tulis nama dan ucapan anda untuk Isma &amp; Fikri.</p>
     <button id="closeUcapanBtn" aria-label="Tutup" style="position:absolute;top:10px;right:12px;background:transparent;border:none;font-size:20px;color:#333;cursor:pointer;z-index:10001">&times;</button>
@@ -385,11 +408,11 @@
   const popupRsvpIframe = document.getElementById('popupRsvpIframe');
   const ucapanForm = document.getElementById('ucapanForm');
 
-  function hideAllPopups(){ [contactCard,mapPopup,popupRsvp,popupRsvpIframe,ucapanForm].forEach(e=>{ if(e) e.style.display='none'; }); }
+  function hideAllPopups(){ [contactCard,mapPopup,popupRsvp,popupRsvpIframe,ucapanForm].forEach(e=>{ if(e) e.style.display='none'; e && e.setAttribute && e.setAttribute('aria-hidden','true'); }); }
 
-  if(callBtn) callBtn.addEventListener('click', function(e){ e.stopPropagation(); hideAllPopups(); contactCard.style.display = (contactCard.style.display==='block')? 'none':'block'; });
-  if(mapBtn) mapBtn.addEventListener('click', function(e){ e.stopPropagation(); hideAllPopups(); mapPopup.style.display = (mapPopup.style.display==='block')? 'none':'block'; });
-  if(bottomRsvpBtn) bottomRsvpBtn.addEventListener('click', function(e){ e.stopPropagation(); hideAllPopups(); popupRsvp.style.display = (popupRsvp.style.display==='block')? 'none':'block'; });
+  if(callBtn) callBtn.addEventListener('click', function(e){ e.stopPropagation(); hideAllPopups(); contactCard.style.display = (contactCard.style.display==='block')? 'none':'block'; contactCard.setAttribute('aria-hidden', contactCard.style.display==='none'); });
+  if(mapBtn) mapBtn.addEventListener('click', function(e){ e.stopPropagation(); hideAllPopups(); mapPopup.style.display = (mapPopup.style.display==='block')? 'none':'block'; mapPopup.setAttribute('aria-hidden', mapPopup.style.display==='none'); });
+  if(bottomRsvpBtn) bottomRsvpBtn.addEventListener('click', function(e){ e.stopPropagation(); hideAllPopups(); popupRsvp.style.display = (popupRsvp.style.display==='block')? 'none':'block'; popupRsvp.setAttribute('aria-hidden', popupRsvp.style.display==='none'); });
 
   document.addEventListener('click', function(e){
     const popupEls = [contactCard,mapPopup,popupRsvp,popupRsvpIframe,ucapanForm];
@@ -403,15 +426,15 @@
   // open external rsvp iframe & ucapan toggles
   const openExternalRsvp = document.getElementById('openExternalRsvp');
   const openUcapanBtn = document.getElementById('openUcapan');
-  if(openExternalRsvp) openExternalRsvp.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); popupRsvp.style.display='none'; popupRsvpIframe.style.display = (popupRsvpIframe.style.display==='block')? 'none':'block'; const el = document.getElementById('rsvp_nama'); if(el) el.focus(); });
-  if(openUcapanBtn) openUcapanBtn.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); popupRsvp.style.display='none'; ucapanForm.style.display = (ucapanForm.style.display==='block')? 'none':'block'; const el = document.getElementById('ucap_name'); if(el) el.focus(); });
+  if(openExternalRsvp) openExternalRsvp.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); popupRsvp.style.display='none'; popupRsvpIframe.style.display = (popupRsvpIframe.style.display==='block')? 'none':'block'; popupRsvpIframe.setAttribute('aria-hidden', popupRsvpIframe.style.display==='none'); const el = document.getElementById('rsvp_nama'); if(el) el.focus(); });
+  if(openUcapanBtn) openUcapanBtn.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); popupRsvp.style.display='none'; ucapanForm.style.display = (ucapanForm.style.display==='block')? 'none':'block'; ucapanForm.setAttribute('aria-hidden', ucapanForm.style.display==='none'); const el = document.getElementById('ucap_name'); if(el) el.focus(); });
 
   // close popup buttons
   const closeRsvpIframe = document.getElementById('closeRsvpIframe');
-  if(closeRsvpIframe) closeRsvpIframe.addEventListener('click', function(e){ e.stopPropagation(); popupRsvpIframe.style.display = 'none'; });
+  if(closeRsvpIframe) closeRsvpIframe.addEventListener('click', function(e){ e.stopPropagation(); popupRsvpIframe.style.display = 'none'; popupRsvpIframe.setAttribute('aria-hidden','true'); });
 
   const closeUcapanBtn = document.getElementById('closeUcapanBtn');
-  if(closeUcapanBtn) closeUcapanBtn.addEventListener('click', function(e){ e.stopPropagation(); ucapanForm.style.display = 'none'; });
+  if(closeUcapanBtn) closeUcapanBtn.addEventListener('click', function(e){ e.stopPropagation(); ucapanForm.style.display = 'none'; ucapanForm.setAttribute('aria-hidden','true'); });
 
   // ---------- JSONP loader for ucapan list ----------
   const bubblesContainer = document.getElementById('bubblesContainer');
@@ -494,7 +517,7 @@
       iframe.addEventListener('load', onLoad);
       form.submit();
 
-      setTimeout(()=>{
+      setTimeout(()=>{ 
         if (called) return;
         called = true;
         try{ iframe.removeEventListener('load', onLoad);}catch(e){}
@@ -526,7 +549,7 @@
 
       showStatus(rsvpStatus, 'RSVP dihantar. Terima kasih!', true);
       rsvpForm.reset();
-      setTimeout(()=>{ popupRsvpIframe.style.display='none'; }, 600);
+      setTimeout(()=>{ popupRsvpIframe.style.display='none'; popupRsvpIframe.setAttribute('aria-hidden','true'); }, 600);
 
       const payload = { nama, jumlah, hadir, type:'rsvp' };
       postFormNoCORS(RSVP_WS_URL, payload, function(ok){
